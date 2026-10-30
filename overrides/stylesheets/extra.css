@@ -1,0 +1,28 @@
+/* Persian font for the whole site */
+:root {
+  --md-text-font: "Vazirmatn";
+}
+body, .md-typeset {
+  font-family: "Vazirmatn", Tahoma, sans-serif;
+}
+.md-typeset { line-height: 1.9; }
+
+/* Keep code, math and diagrams left-to-right inside the RTL layout */
+.md-typeset pre,
+.md-typeset code,
+.md-typeset .highlight,
+.md-typeset .arithmatex,
+.md-typeset mjx-container,
+.md-typeset .mermaid {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+.md-typeset mjx-container[display="true"] { text-align: center; }
+
+/* Tables: right-align by default in RTL */
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td { text-align: right; }
+
+/* Images fit the page */
+.md-typeset img { max-width: 100%; height: auto; }
