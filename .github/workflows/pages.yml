@@ -1,4 +1,4 @@
-name: Build and deploy site
+name: Publish site to GitHub Pages
 
 on:
   push:
@@ -22,12 +22,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install MkDocs
-        run: pip install "mkdocs>=1.6,<2" "mkdocs-material>=9.5,<10" mkdocs-callouts
-      - name: Prepare docs folder
-        run: python overrides/prepare_docs.py
-      - name: Build site
-        run: mkdocs build -f overrides/site-config.yml
+      - run: pip install -r web/requirements.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: Build website
+        run: bash web/build.sh
+      - name: Make PDFs (each session + all sessions)
+        run: python web/make_pdfs.py site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
