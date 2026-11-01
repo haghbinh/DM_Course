@@ -1,0 +1,21 @@
+/* Keep Python code left-to-right in this RTL vault, including code inside callouts
+   such as > [!question], > [!example] and > [!note]. */
+
+/* Reading view and rendered callouts in Live Preview */
+.markdown-rendered pre,
+.markdown-rendered pre code,
+.markdown-rendered .callout pre,
+.markdown-rendered .callout pre code,
+.cm-embed-block pre,
+.cm-embed-block pre code {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: isolate;
+}
+
+/* Editing view: lines of a fenced code block */
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-codeblock {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: isolate;
+}

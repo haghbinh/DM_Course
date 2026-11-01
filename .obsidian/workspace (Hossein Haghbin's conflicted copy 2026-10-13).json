@@ -1,0 +1,332 @@
+{
+  "main": {
+    "id": "6955f6274f4569c4",
+    "type": "split",
+    "children": [
+      {
+        "id": "84fdcbee4674322d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1b940e604522a096",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Part 1_Data Understanding/۵ - معیارهای شباهت و فاصله.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "۵ - معیارهای شباهت و فاصله"
+            }
+          }
+        ],
+        "stacked": true
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "85bf2299a23649f1",
+    "type": "split",
+    "children": [
+      {
+        "id": "24dcd2b9e2472d41",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b5102a05106a6c3a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "20544da4ffad4030",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b0c190d3efed1d21",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200,
+    "collapsed": true
+  },
+  "right": {
+    "id": "bbe8e4798675a2d2",
+    "type": "split",
+    "children": [
+      {
+        "id": "e559683f357bf3f0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "88092bcd2d385e75",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Term2/جلسه 4.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for جلسه 4"
+            }
+          },
+          {
+            "id": "ee7ceccab2a27650",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Term2/جلسه 4.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from جلسه 4"
+            }
+          },
+          {
+            "id": "a27f562e91c4a392",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "8013b9a00deded20",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "0d27dc040a3078e3",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Term2/جلسه 4.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of جلسه 4"
+            }
+          },
+          {
+            "id": "b7304b50e85e53e3",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "488a093f488c137a",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "f09cf115ff104483",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "a5bd244e053aaa0c",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "84dca6f3ceb98188",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "7e02c50e2cc0766a",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "5ed663a3fa409f04",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "24340dc30d93a95e",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
+            }
+          },
+          {
+            "id": "b45f3b76ace908a9",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "calendar-heart",
+              "title": "Persian Calendar"
+            }
+          }
+        ],
+        "currentTab": 13
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "1b940e604522a096",
+  "lastOpenFiles": [
+    "20 - مبانی طبقه‌بندی و k-NN.md",
+    "Part 1_Data Understanding/۵ - معیارهای شباهت و فاصله.md",
+    "Untitled 18.md",
+    "Untitled 17.md",
+    "Untitled 16.md",
+    "Untitled 15.md",
+    "Untitled 14.md",
+    "Untitled 13.md",
+    "Untitled 12.md",
+    "Untitled 11.md",
+    "Untitled 10.md",
+    "Untitled 9.md",
+    "Untitled 8.md",
+    "Untitled 7.md",
+    "Untitled 6.md",
+    "Untitled 5.md",
+    "Untitled 4.md",
+    "Untitled 3.md",
+    "Untitled 2.md",
+    "Untitled 1.md",
+    "Untitled.md",
+    "11- داده پرت، نویز و داده تکراری.md",
+    "Teaching Plan 2.md",
+    "۱۰ - مدیریت داده گمشده.md",
+    "Part 2_EDA/9 - مطالعه موردی EDA.md",
+    "Part 2_EDA/8 - تحلیل دومتغیره و چندمتغیره.md",
+    "Part 0_Introduction",
+    "img/Pasted image 20261003093511.png",
+    "img/Pasted image 20260928094113.png",
+    "img/Pasted image 20260928094255.png",
+    "img/Pasted image 20260928094209.png",
+    "img/Pasted image 20260927221608.png",
+    "img/Pasted image 20260924190726.png",
+    "img/Pasted image 20260927221550.png",
+    "img/Pasted image 20260927221429.png",
+    "img/Pasted image 20260927221353.png",
+    "img/Pasted image 20260927221230.png",
+    "img",
+    "Part 6",
+    "Part 5",
+    "Part 4_Dimension Reduction",
+    "Part 3_Data Preprocessing",
+    "Part 2_EDA",
+    "Part 1_Data Understanding",
+    "Term1/عنوان جلسات ترم 1.base",
+    "html/Term2",
+    "Untitled.canvas"
+  ]
+}

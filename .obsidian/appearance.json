@@ -1,0 +1,12 @@
+{
+  "cssTheme": "PLN",
+  "theme": "obsidian",
+  "showViewHeader": true,
+  "showRibbon": true,
+  "interfaceFontFamily": "",
+  "textFontFamily": "B Zar",
+  "baseFontSize": 22,
+  "enabledCssSnippets": [
+    "ltr-code"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "vaultId": "7ed43b75-532c-45fa-b1ad-37730f0fac66",
+  "recoveryRetentionDays": 7,
+  "language": "auto",
+  "outputOptions": {
+    "warnCellMiB": 50,
+    "warnNotebookMiB": 200,
+    "hardLimit": false,
+    "autoDiscardOld": false,
+    "collapse": true,
+    "collapseHeight": 600,
+    "lazyImages": true,
+    "releaseHistoryOnClear": false
+  }
+}
