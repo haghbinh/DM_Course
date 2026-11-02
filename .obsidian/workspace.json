@@ -11,10 +11,14 @@
             "id": "efb3529f50982590",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "17 - رگرسیون خطی چندگانه و ارزیابی"
             }
           }
         ],
