@@ -11,14 +11,10 @@
             "id": "efb3529f50982590",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ],
@@ -277,9 +273,19 @@
               "icon": "lucide-ghost",
               "title": "persian-calendar"
             }
+          },
+          {
+            "id": "1fd0e18fe10b6da9",
+            "type": "leaf",
+            "state": {
+              "type": "persian-calendar",
+              "state": {},
+              "icon": "calendar-heart",
+              "title": "Persian Calendar"
+            }
           }
         ],
-        "currentTab": 15
+        "currentTab": 16
       }
     ],
     "direction": "horizontal",
@@ -294,13 +300,17 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "jupyter-notebook:Create Jupyter Notebook": false
     }
   },
   "active": "efb3529f50982590",
   "lastOpenFiles": [
-    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
     "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md",
+    "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md",
+    "Part 2_EDA/9 - مطالعه موردی EDA.md",
+    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
     "Untitled.md",
     "img/mpg_power_model.png",
     "img/house_actual_vs_predicted.png",
@@ -319,7 +329,6 @@
     "overrides/javascripts",
     "overrides",
     "Part 3_Data Preprocessing/۱۵ - کارگاه Pipeline.ipynb",
-    "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md",
     "img/taxi_fare_residuals.png",
     "img/taxi_fare_regression.png",
     "Excalidraw/Drawing 2026-10-26 09.50.07.excalidraw.md",
