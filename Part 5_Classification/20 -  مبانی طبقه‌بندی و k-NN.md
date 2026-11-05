@@ -2,469 +2,475 @@
 
 ## از رگرسیون به طبقه‌بندی
 
-در چهار جلسه گذشته، هدف ما پیش‌بینی یک **عدد** بود: قیمت خانه، پیشرفت بیماری، نمره ← [[16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده]] اما بسیاری از پرسش‌های داده‌کاوی درباره **برچسب** هستند:
+در چهار جلسه گذشته هدف ما پیش‌بینی یک **عدد** بود ← [مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده](../Part%204_Regression/16%20-%20%D9%85%D8%A8%D8%A7%D9%86%DB%8C%20%DB%8C%D8%A7%D8%AF%DA%AF%DB%8C%D8%B1%DB%8C%20%D9%86%D8%B8%D8%A7%D8%B1%D8%AA%E2%80%8C%D8%B4%D8%AF%D9%87%20%D9%88%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86%20%D8%AE%D8%B7%DB%8C%20%D8%B3%D8%A7%D8%AF%D9%87.md). اما بسیاری از پرسش‌های داده‌کاوی درباره **برچسب** هستند: این ایمیل هرزنامه است یا نه؟ این مشتری اشتراکش را لغو می‌کند؟ این مسافر تایتانیک زنده می‌ماند؟
 
-- آیا این ایمیل هرزنامه است یا نه؟
-- آیا این مشتری در ماه آینده اشتراکش را لغو می‌کند؟
-- این تومور خوش‌خیم است یا بدخیم؟
-- این گل زنبق از کدام گونه است: Setosa، Versicolor یا Virginica؟
-- این تراکنش بانکی تقلب است یا عادی؟
+در **طبقه‌بندی** (Classification) متغیر هدف **کیفی** است و مدل هر نمونه را به یکی از **کلاس‌های** از پیش تعریف‌شده نسبت می‌دهد. همه ابزارهایی که تا اینجا ساختیم (تقسیم داده، Pipeline، بیش‌برازش و اعتبارسنجی متقابل) در طبقه‌بندی هم به همان شکل به کار می‌روند ← [بیش‌برازش و اعتبارسنجی متقابل](../Part%204_Regression/18%20-%20%D8%A8%DB%8C%D8%B4%E2%80%8C%D8%A8%D8%B1%D8%A7%D8%B2%D8%B4%20%D9%88%20%D8%A7%D8%B9%D8%AA%D8%A8%D8%A7%D8%B1%D8%B3%D9%86%D8%AC%DB%8C%20%D9%85%D8%AA%D9%82%D8%A7%D8%A8%D9%84.md)
 
-در **طبقه‌بندی** (Classification) متغیر هدف **کیفی** است و مدل باید هر شیء داده را به یکی از **کلاس‌های** از پیش تعریف‌شده نسبت دهد. همه مفاهیمی که تا اینجا یاد گرفتیم (تقسیم داده، بیش‌برازش، اعتبارسنجی متقابل، Pipeline) در طبقه‌بندی نیز به همان شکل به کار می‌روند ← [[18 - بیش‌برازش و اعتبارسنجی متقابل]]
+این جلسه به سه پرسش پاسخ می‌دهد:
 
-> [!important] نکته کلیدی در این جلسه ساده‌ترین طبقه‌بند ممکن را می‌بینیم: **k-نزدیک‌ترین همسایه** (k-Nearest Neighbors). ایده آن یک جمله است: «بگو همسایه‌هایت چه کسانی‌اند تا بگویم تو که هستی». با وجود سادگی، k-NN مفاهیم اصلی طبقه‌بندی (مرز تصمیم، پیچیدگی مدل، نقش فاصله و مقیاس‌بندی) را به‌خوبی نشان می‌دهد.
+- مسئله طبقه‌بندی و **مرز تصمیم** چیست؟
+- ساده‌ترین طبقه‌بند، یعنی **k-نزدیک‌ترین همسایه**، چگونه کار می‌کند و k را چگونه انتخاب کنیم؟
+- چرا **مقیاس‌بندی** برای k-NN حیاتی است و این روش کجا ضعیف عمل می‌کند؟
 
 ---
 
 ## مسئله طبقه‌بندی
 
-### تعریف
+مجموعه آموزش شامل n زوج (بردار ویژگی، برچسب کلاس) است. هدف یادگیری تابعی است که هر بردار ویژگی را به یکی از K کلاس نگاشت دهد. بیشتر طبقه‌بندها **احتمال** هر کلاس را برآورد می‌کنند و کلاسی را برمی‌گزینند که بیشترین احتمال را دارد:
 
-مجموعه آموزش شامل n زوج (بردار ویژگی، برچسب کلاس) است. هدف یادگیری تابعی است که هر بردار ویژگی را به یک کلاس از مجموعه کلاس‌ها نگاشت دهد:
+$$
+\hat{y} = \arg\max_{k} \; P(y = C_k \mid x)
+$$
 
-$$ f : \mathbb{R}^p \rightarrow {C_1, C_2, \ldots, C_K} $$
+| نوع مسئله | تعداد کلاس | مثال |
+|:---:|:---:|:---:|
+| طبقه‌بندی دودویی (Binary) | ۲ | زنده ماندن مسافر، هرزنامه یا عادی؛ یک کلاس «مثبت» (مورد توجه) است |
+| طبقه‌بندی چندکلاسه (Multiclass) | بیشتر از ۲ | گونه گل زنبق، رقم دست‌نویس؛ هر نمونه دقیقاً یک کلاس |
+| طبقه‌بندی چندبرچسبی (Multilabel) | چند برچسب هم‌زمان | برچسب‌های موضوعی یک مقاله (خارج از بحث این درس) |
 
-بیشتر طبقه‌بندها علاوه بر برچسب، **احتمال** هر کلاس را نیز برآورد می‌کنند و کلاسی را برمی‌گزینند که بیشترین احتمال را دارد:
+طبقه‌بند فضای ویژگی‌ها را به **ناحیه‌هایی** تقسیم می‌کند که در هر کدام یک کلاس پیش‌بینی می‌شود؛ مرز میان ناحیه‌ها **مرز تصمیم** (Decision Boundary) است.
 
-$$ \hat{y} = \arg\max_{k} ; P(y = C_k \mid x) $$
+| نوع مرز | مدل‌های نمونه | ویژگی |
+|:---:|:---:|:---:|
+| خطی (ابرصفحه) | رگرسیون لجستیک، SVM خطی | ساده و کم‌واریانس؛ ممکن است کم‌برازش کند |
+| محوری و پله‌ای | درخت تصمیم | خطوط موازی محورها |
+| غیرخطی و نامنظم | الگوریتم k-NN، SVM با هسته RBF | انعطاف‌پذیر؛ ممکن است بیش‌برازش کند |
 
-### دودویی و چندکلاسه
+تا جلسه ۲۵ که معیارهای ارزیابی را کامل می‌بینیم، از **دقت** (Accuracy) استفاده می‌کنیم و همیشه آن را با **مدل پایه** «همیشه کلاس اکثریت» مقایسه می‌کنیم:
 
-|نوع مسئله|تعداد کلاس|مثال|نکته|
-|:-:|:-:|:-:|:-:|
-|طبقه‌بندی دودویی (Binary)|۲|هرزنامه یا عادی، بیمار یا سالم|معمولاً یک کلاس «مثبت» (مورد توجه) و دیگری «منفی» است|
-|طبقه‌بندی چندکلاسه (Multiclass)|بیشتر از ۲|گونه گل زنبق، رقم دست‌نویس|هر نمونه دقیقاً یک کلاس دارد|
-|طبقه‌بندی چندبرچسبی (Multilabel)|چند برچسب هم‌زمان|برچسب‌های موضوعی یک مقاله|هر نمونه می‌تواند چند برچسب داشته باشد (خارج از بحث این درس)|
+$$
+\text{Accuracy} = \frac{\text{number of correct predictions}}{\text{total number of predictions}}
+$$
 
-> [!tip] تبدیل چندکلاسه به دودویی برخی الگوریتم‌ها ذاتاً دودویی‌اند (مثل SVM). برای مسائل چندکلاسه دو راهبرد رایج داریم:
-> 
-> - راهبرد **یکی در برابر بقیه** (One-vs-Rest): برای هر کلاس یک طبقه‌بند «این کلاس یا بقیه» ساخته می‌شود؛ یعنی K طبقه‌بند.
-> - راهبرد **یکی در برابر یکی** (One-vs-One): برای هر جفت کلاس یک طبقه‌بند؛ یعنی K(K−1)/2 طبقه‌بند.
-> 
-> الگوریتم k-NN نیازی به این راهبردها ندارد و ذاتاً چندکلاسه است. جزئیات بیشتر ← [[21 - بیز ساده و رگرسیون لجستیک]]
-
-### مرز تصمیم (Decision Boundary)
-
-طبقه‌بند فضای ویژگی‌ها را به **ناحیه‌هایی** تقسیم می‌کند که در هر ناحیه یک کلاس پیش‌بینی می‌شود. مرز میان این ناحیه‌ها **مرز تصمیم** نام دارد.
-
-|نوع مرز|مدل‌های نمونه|ویژگی|
-|:-:|:-:|:-:|
-|خطی (ابرصفحه)|رگرسیون لجستیک، SVM خطی|ساده، کم‌واریانس، ممکن است کم‌برازش کند|
-|محوری و پله‌ای|درخت تصمیم|خطوط موازی محورها|
-|غیرخطی و نامنظم|k-NN، SVM با هسته RBF|انعطاف‌پذیر، ممکن است بیش‌برازش کند|
-
-```mermaid
-flowchart LR
-    A[فضای ویژگی‌ها] --> B[طبقه‌بند]
-    B --> C[ناحیه کلاس ۱]
-    B --> D[ناحیه کلاس ۲]
-    B --> E[ناحیه کلاس ۳]
-    C -.مرز تصمیم.- D
-    D -.مرز تصمیم.- E
-```
-
-> [!note] مرز تصمیم و بیش‌برازش مرزی که با پیچ‌وتاب زیاد دور تک‌تک نقاط آموزش می‌چرخد، نشانه **بیش‌برازش** است؛ دقیقاً مانند منحنی چندجمله‌ای درجه بالا در رگرسیون. مرز بیش از حد ساده (مثلاً خط راست برای کلاس‌های حلقوی) نشانه **کم‌برازش** است. رسم مرز تصمیم در دو بعد، بهترین راه برای درک شهودی پیچیدگی یک طبقه‌بند است.
-
-### معیار ارزیابی اولیه: دقت
-
-تا جلسه ۲۵ که معیارهای ارزیابی را کامل بررسی می‌کنیم، از **دقت** (Accuracy) استفاده می‌کنیم:
-
-$$ \text{Accuracy} = \frac{\text{number of correct predictions}}{\text{total number of predictions}} $$
-
-> [!warning] دقت در داده نامتوازن گمراه‌کننده است اگر فقط ۱ درصد تراکنش‌ها تقلب باشد، مدلی که **همیشه** «عادی» پیش‌بینی کند دقت ۹۹ درصد دارد اما کاملاً بی‌فایده است. معیارهای بهتر (Precision، Recall، F1) را در جلسه ۲۵ می‌بینیم ← [[25 - ارزیابی مدل‌های طبقه‌بندی]]
+> [!warning] دقت در داده نامتوازن گمراه‌کننده است
+> اگر فقط ۱ درصد تراکنش‌ها تقلب باشد، مدلی که **همیشه** «عادی» بگوید دقت ۹۹ درصد دارد اما بی‌فایده است ← [ارزیابی مدل‌های طبقه‌بندی](25%20-%20%D8%A7%D8%B1%D8%B2%DB%8C%D8%A7%D8%A8%DB%8C%20%D9%85%D8%AF%D9%84%E2%80%8C%D9%87%D8%A7%DB%8C%20%D8%B7%D8%A8%D9%82%D9%87%E2%80%8C%D8%A8%D9%86%D8%AF%DB%8C.md)
 
 ---
 
 ## الگوریتم k-NN
 
-### گام‌های الگوریتم
+برای طبقه‌بندی نقطه جدید q:
 
-برای طبقه‌بندی یک نقطه جدید q:
+1. فاصله q را تا **همه** نقاط آموزش حساب کن (معمولاً اقلیدسی ← [معیارهای شباهت و فاصله](../Part%201_Data%20Understanding/%DB%B5%20-%20%D9%85%D8%B9%DB%8C%D8%A7%D8%B1%D9%87%D8%A7%DB%8C%20%D8%B4%D8%A8%D8%A7%D9%87%D8%AA%20%D9%88%20%D9%81%D8%A7%D8%B5%D9%84%D9%87.md)).
+2. تعداد k نقطه با کمترین فاصله را انتخاب کن.
+3. کلاسی را که میان این k همسایه **بیشترین رأی** را دارد، به q نسبت بده.
 
-1. فاصله q را تا **همه** نقاط آموزش محاسبه کن.
-2. تعداد k نقطه با کمترین فاصله (k نزدیک‌ترین همسایه) را انتخاب کن.
-3. کلاسی را که در میان این k همسایه **بیشترین رأی** را دارد، به q نسبت بده.
+احتمال هر کلاس هم نسبت همسایه‌های آن کلاس است (N مجموعه k همسایه و I تابع نشانگر):
 
-رأی اکثریت به زبان ریاضی (در آن N مجموعه k همسایه و I تابع نشانگر است):
+$$
+\hat{P}(y = c \mid q) = \frac{1}{k} \sum_{i \in N_k(q)} I(y_i = c)
+$$
 
-$$ \hat{y}(q) = \arg\max_{c} \sum_{i \in N_k(q)} I(y_i = c) $$
+در **رأی وزن‌دار** (`weights="distance"`) وزن هر همسایه عکس فاصله آن است تا همسایه‌های نزدیک‌تر اثر بیشتری داشته باشند:
 
-احتمال هر کلاس نیز نسبت همسایه‌های آن کلاس است:
+$$
+w_i = \frac{1}{d(q, x_i)}
+$$
 
-$$ \hat{P}(y = c \mid q) = \frac{1}{k} \sum_{i \in N_k(q)} I(y_i = c) $$
+### مثال حل‌شده: k-NN با شش نقطه
 
-### فاصله‌ها
+شش نقطه آموزش با دو کلاس A و B داریم و نقطه جدید q با مختصات (۳، ۳) را طبقه‌بندی می‌کنیم.
 
-معیار فاصله پیش‌فرض، **فاصله اقلیدسی** است. فاصله مینکوفسکی با پارامتر p هر دو فاصله رایج را پوشش می‌دهد ← [[۵ - معیارهای شباهت و فاصله]]
+#### گام ۱ — فاصله تا همه نقاط
 
-$$ d_p(x, z) = \left( \sum_{j=1}^{p} |x_j - z_j|^{p} \right)^{1/p} \qquad p = 1: \text{Manhattan}, \quad p = 2: \text{Euclidean} $$
+| نقطه | ویژگی x1 | ویژگی x2 | کلاس | فاصله اقلیدسی تا q | رتبه |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| ۱ | 3 | 4 | B | √1 = 1.000 | ۱ |
+| ۲ | 1 | 3 | A | √4 = 2.000 | ۲ |
+| ۳ | 4 | 1 | A | √5 ≈ 2.236 | ۳ |
+| ۴ | 5 | 5 | B | √8 ≈ 2.828 | ۴ |
+| ۵ | 6 | 3 | B | √9 = 3.000 | ۵ |
+| ۶ | 1 | 0 | A | √13 ≈ 3.606 | ۶ |
 
-> [!example] مثال حل‌شده — k-NN با شش نقطه شش نقطه آموزش با دو کلاس A و B داریم و می‌خواهیم نقطه جدید q با مختصات (۳، ۳) را طبقه‌بندی کنیم:
-> 
-> |نقطه|مختصات|کلاس|فاصله اقلیدسی تا q|رتبه|
-> |:-:|:-:|:-:|:-:|:-:|
-> |نقطه ۱|(3, 4)|B|√1 = 1.000|۱|
-> |نقطه ۲|(1, 3)|A|√4 = 2.000|۲|
-> |نقطه ۳|(4, 1)|A|√5 ≈ 2.236|۳|
-> |نقطه ۴|(5, 5)|B|√8 ≈ 2.828|۴|
-> |نقطه ۵|(6, 3)|B|√9 = 3.000|۵|
-> |نقطه ۶|(1, 0)|A|√13 ≈ 3.606|۶|
-> 
-> برای نمونه، فاصله نقطه ۳ تا q: $$ d = \sqrt{(4 - 3)^2 + (1 - 3)^2} = \sqrt{1 + 4} = \sqrt{5} \approx 2.236 $$
-> 
-> |مقدار k|همسایه‌ها|رأی‌ها|پیش‌بینی|احتمال کلاس B|
-> |:-:|:-:|:-:|:-:|:-:|
-> |۱|نقطه ۱|یک رأی B|**B**|1.00|
-> |۳|نقاط ۱، ۲، ۳|دو رأی A، یک رأی B|**A**|0.33|
-> |۵|نقاط ۱ تا ۵|دو رأی A، سه رأی B|**B**|0.60|
-> 
-> پیش‌بینی با تغییر k **عوض می‌شود**. انتخاب k بخش مهمی از ساخت مدل است.
+برای نمونه، فاصله نقطه ۳ تا q:
 
-### رأی وزن‌دار با فاصله
+$$
+d = \sqrt{(4 - 3)^2 + (1 - 3)^2} = \sqrt{1 + 4} = \sqrt{5} \approx 2.236
+$$
 
-در رأی ساده، همسایه سوم که فاصله‌اش دو برابر همسایه اول است، همان وزن را دارد. در **رأی وزن‌دار** (در scikit-learn با `weights="distance"`) وزن هر همسایه **عکس فاصله** آن است:
+#### گام ۲ — رأی ساده برای چند k
 
-$$ w_i = \frac{1}{d(q, x_i)} \qquad \hat{y}(q) = \arg\max_{c} \sum_{i \in N_k(q)} w_i , I(y_i = c) $$
+| مقدار k | همسایه‌ها | رأی‌ها | پیش‌بینی | احتمال کلاس B |
+|:---:|:---:|:---:|:---:|:---:|
+| ۱ | نقطه ۱ | یک رأی B | **B** | 1.000 |
+| ۳ | نقاط ۱، ۲ و ۳ | دو رأی A، یک رأی B | **A** | 0.333 |
+| ۵ | نقاط ۱ تا ۵ | دو رأی A، سه رأی B | **B** | 0.600 |
 
-> [!example] مثال حل‌شده — رأی وزن‌دار با k برابر ۳ وزن سه همسایه نزدیک: نقطه ۱ (B) برابر ۱/۱ = ۱، نقطه ۲ (A) برابر ۱/۲ = ۰.۵ و نقطه ۳ (A) برابر ۱/۲.۲۳۶ ≈ ۰.۴۴۷. $$ \text{score}(A) = 0.5 + 0.447 = 0.947, \qquad \text{score}(B) = 1.000 $$ با رأی وزن‌دار، کلاس **B** پیش‌بینی می‌شود (احتمال B برابر ۱ تقسیم بر ۱.۹۴۷ ≈ ۰.۵۱۴)، در حالی که رأی ساده A را انتخاب می‌کرد. همسایه بسیار نزدیک B دو همسایه دورتر A را خنثی کرده است.
+#### گام ۳ — رأی وزن‌دار با k برابر ۳
 
-> [!note] حالت تساوی در طبقه‌بندی دودویی، k را **فرد** انتخاب کنید تا رأی مساوی پیش نیاید. در مسائل چندکلاسه تساوی همچنان ممکن است؛ scikit-learn در این حالت کلاسی را برمی‌گزیند که در ترتیب کلاس‌ها زودتر آمده است. رأی وزن‌دار تساوی را عملاً از بین می‌برد.
+وزن‌ها: نقطه ۱ (B) برابر ۱، نقطه ۲ (A) برابر ۰.۵ و نقطه ۳ (A) برابر ۱ تقسیم بر ۲.۲۳۶ یعنی حدود ۰.۴۴۷:
 
----
+$$
+\text{score}(A) = 0.5 + 0.447 = 0.947, \qquad \text{score}(B) = 1.000, \qquad P(B) = \frac{1}{1.947} \approx 0.514
+$$
 
-## انتخاب k و معیار فاصله
+> [!note] بررسی
+> پیش‌بینی با تغییر k **عوض می‌شود** (B، A، B)؛ پس انتخاب k بخش مهمی از ساخت مدل است. با رأی وزن‌دار، همسایه بسیار نزدیک B دو همسایه دورتر A را خنثی کرد. در مسئله دودویی k را **فرد** بگیرید تا رأی مساوی پیش نیاید.
 
-### اثر k بر پیچیدگی
+کلاس `KNeighborsClassifier` همین اعداد را می‌دهد:
 
-|مقدار k|مرز تصمیم|بایاس|واریانس|خطر|
-|:-:|:-:|:-:|:-:|:-:|
-|مقدار k برابر ۱|بسیار نامنظم، جزیره‌های کوچک دور نقاط پرت|کم|زیاد|بیش‌برازش؛ دقت آموزش تقریباً ۱۰۰ درصد|
-|مقدار k متوسط|هموارتر|متوسط|متوسط|—|
-|مقدار k بسیار بزرگ (نزدیک n)|تقریباً ثابت: همیشه کلاس اکثریت|زیاد|کم|کم‌برازش|
+```python
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
 
-> [!important] درجه آزادی مؤثر پیچیدگی k-NN با افزایش k **کاهش** می‌یابد؛ برعکس درجه چندجمله‌ای. به طور تقریبی، k-NN با n نمونه آموزش رفتاری شبیه مدلی با حدود n/k پارامتر دارد. با k برابر ۱، مدل «به تعداد نمونه‌ها پارامتر» دارد.
+# 1. Six training points with two classes, and the new point q = (3, 3)
+points = pd.DataFrame({"x1": [3, 1, 4, 5, 6, 1],
+                       "x2": [4, 3, 1, 5, 3, 0],
+                       "label": ["B", "A", "A", "B", "B", "A"]})
+X, y = points[["x1", "x2"]], points["label"]
+q = pd.DataFrame({"x1": [3], "x2": [3]})
 
-> [!warning] دقت آموزش در k برابر ۱ با k برابر ۱، هر نقطه آموزش نزدیک‌ترین همسایه خودش است؛ پس دقت آموزش ۱۰۰ درصد است (مگر نقاط تکراری با برچسب متفاوت وجود داشته باشند). این عدد هیچ اطلاعاتی درباره عملکرد واقعی نمی‌دهد. k را **فقط** با اعتبارسنجی متقابل انتخاب کنید.
+# 2. Simple majority vote for k = 1, 3, 5
+for k in [1, 3, 5]:
+    knn = KNeighborsClassifier(n_neighbors=k).fit(X, y)
+    print(f"k={k}  prediction={knn.predict(q)[0]}  P(B)={knn.predict_proba(q)[0, 1]:.3f}")
 
-> [!example] مثال — انتخاب k روی داده Iris با ۷۰ درصد داده Iris برای آموزش (۱۰۵ نمونه، تقسیم طبقه‌بندی‌شده) و اعتبارسنجی ۵-تایی، میانگین دقت اعتبارسنجی برای چند مقدار k:
-> 
-> |مقدار k|۱|۳|۵|۷|۸|۱۰|۱۵|۲۰|۳۰|
-> |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-> |دقت اعتبارسنجی|0.943|0.952|0.933|0.962|**0.971**|0.952|0.924|0.886|0.876|
-> 
-> بهترین مقدار k برابر **۸** است. پس از k برابر ۱۵ دقت به‌تدریج افت می‌کند (کم‌برازش). نوسان میان k‌های کوچک، نشانه حساسیت به تقسیم‌بندی داده است؛ با فقط ۱۰۵ نمونه، هر خطا حدود یک درصد دقت را جابه‌جا می‌کند.
+# 3. Distance-weighted vote with k = 3
+knn_w = KNeighborsClassifier(n_neighbors=3, weights="distance").fit(X, y)
+print(f"weighted k=3  prediction={knn_w.predict(q)[0]}  P(B)={knn_w.predict_proba(q)[0, 1]:.3f}")
 
-> [!tip] قاعده سرانگشتی مقدار اولیه‌ای حدود جذر n (تعداد نمونه‌های آموزش) پیشنهاد می‌شود، اما همیشه با جست‌وجوی شبکه‌ای و اعتبارسنجی متقابل آن را تنظیم کنید.
+# 4. Distances and indices of the 3 nearest neighbours (index 0 = point 1)
+dist, idx = knn.kneighbors(q, n_neighbors=3)
+print(f"neighbours={idx[0] + 1}  distances={dist[0].round(3)}")
+```
 
-### انتخاب معیار فاصله
-
-|معیار فاصله|پارامتر در scikit-learn|مناسب برای|
-|:-:|:-:|:-:|
-|فاصله اقلیدسی|metric="minkowski" با p=2 (پیش‌فرض)|ویژگی‌های عددی پیوسته و هم‌مقیاس|
-|فاصله منهتن|p=1|داده با ابعاد بالاتر، حساسیت کمتر به اختلاف بزرگ در یک ویژگی|
-|فاصله کسینوسی|metric="cosine"|بردارهای متنی و داده تُنُک|
-|فاصله همینگ|metric="hamming"|ویژگی‌های دودویی یا کیفی کدگذاری‌شده|
-
-### نقش مقیاس‌بندی
-
-الگوریتم k-NN کاملاً بر پایه **فاصله** است. ویژگی با دامنه عددی بزرگ‌تر، فاصله را **کنترل** می‌کند و بقیه ویژگی‌ها عملاً نادیده گرفته می‌شوند.
-
-> [!example] مثال حل‌شده — اثر مقیاس‌بندی می‌خواهیم مشتری جدید q (سن ۳۰ سال، درآمد ماهانه ۲۰٬۰۰۰ هزار تومان) را با دو مشتری قبلی مقایسه کنیم:
-> 
-> |مشتری|سن|درآمد (هزار تومان)|کلاس|
-> |:-:|:-:|:-:|:-:|
-> |مشتری ۱|32|50,000|خرید|
-> |مشتری ۲|60|22,000|عدم خرید|
-> 
-> **بدون مقیاس‌بندی:** $$ d(q, 1) = \sqrt{2^2 + 30000^2} \approx 30000.0, \qquad d(q, 2) = \sqrt{30^2 + 2000^2} \approx 2000.2 $$ مشتری ۲ نزدیک‌تر است، در حالی که ۳۰ سال اختلاف سن دارد! اختلاف سن در برابر اختلاف درآمد هیچ اثری ندارد.
-> 
-> **با مقیاس‌بندی Min-Max** (دامنه سن ۲۰ تا ۶۰ و دامنه درآمد ۱۰٬۰۰۰ تا ۶۰٬۰۰۰): مشتری q به (۰.۲۵، ۰.۲۰)، مشتری ۱ به (۰.۳۰، ۰.۸۰) و مشتری ۲ به (۱.۰۰، ۰.۲۴) نگاشت می‌شود: $$ d(q, 1) = \sqrt{0.05^2 + 0.60^2} \approx 0.602, \qquad d(q, 2) = \sqrt{0.75^2 + 0.04^2} \approx 0.751 $$ حالا مشتری ۱ نزدیک‌تر است و پیش‌بینی 1-NN از «عدم خرید» به «خرید» تغییر می‌کند.
-
-> [!example] مثال — داده Wine داده Wine (۱۷۸ نمونه، ۱۳ ویژگی شیمیایی، ۳ کلاس) ویژگی‌هایی با مقیاس بسیار متفاوت دارد: انحراف معیار ویژگی proline حدود **۳۱۵** و انحراف معیار nonflavanoid_phenols حدود **۰.۱۲** است. دقت اعتبارسنجی ۵-تایی k-NN با k برابر ۵:
-> 
-> |پیش‌پردازش|دقت اعتبارسنجی|
-> |:-:|:-:|
-> |بدون مقیاس‌بندی|0.680|
-> |مقیاس‌بندی Min-Max|0.961|
-> |استانداردسازی|**0.972**|
-> 
-> فقط با مقیاس‌بندی، دقت حدود **۲۹ واحد درصد** بهبود می‌یابد.
+```
+k=1  prediction=B  P(B)=1.000
+k=3  prediction=A  P(B)=0.333
+k=5  prediction=B  P(B)=0.600
+weighted k=3  prediction=B  P(B)=0.514
+neighbours=[1 2 3]  distances=[1.    2.    2.236]
+```
 
 ---
 
-## مزایا و معایب یادگیری تنبل
+## نقش مقیاس‌بندی
 
-### یادگیری تنبل در برابر مشتاق
+الگوریتم k-NN کاملاً بر پایه **فاصله** است؛ ویژگی با دامنه عددی بزرگ‌تر فاصله را کنترل می‌کند و بقیه ویژگی‌ها عملاً نادیده گرفته می‌شوند.
 
-الگوریتم k-NN در مرحله آموزش **هیچ کاری** نمی‌کند جز ذخیره داده. همه محاسبات به زمان پیش‌بینی موکول می‌شود. به چنین روش‌هایی **یادگیری تنبل** (Lazy Learning) یا **یادگیری مبتنی بر نمونه** (Instance-based) می‌گویند.
+> [!example] مثال — سن و درآمد
+> مشتری جدید ۳۰ ساله با درآمد ۲۰٬۰۰۰ (هزار تومان) را با دو مشتری قبلی مقایسه می‌کنیم: مشتری ۱ (۳۲ ساله، درآمد ۵۰٬۰۰۰، «خرید») و مشتری ۲ (۶۰ ساله، درآمد ۲۲٬۰۰۰، «عدم خرید»).
+> $$
+> d(q, 1) = \sqrt{2^2 + 30000^2} \approx 30000.0, \qquad d(q, 2) = \sqrt{30^2 + 2000^2} \approx 2000.2
+> $$
+> بدون مقیاس‌بندی، مشتری ۲ با ۳۰ سال اختلاف سن «نزدیک‌تر» است. با مقیاس‌بندی Min-Max (سن ۲۰ تا ۶۰، درآمد ۱۰٬۰۰۰ تا ۶۰٬۰۰۰)، فاصله‌ها ۰.۶۰۲ و ۰.۷۵۱ می‌شوند و پیش‌بینی 1-NN از «عدم خرید» به «خرید» تغییر می‌کند.
 
-|جنبه|یادگیری تنبل (k-NN)|یادگیری مشتاق (Eager)، مثلاً رگرسیون لجستیک و درخت|
-|:-:|:-:|:-:|
-|آموزش|فقط ذخیره داده؛ تقریباً آنی|ساخت مدل؛ ممکن است زمان‌بر باشد|
-|پیش‌بینی|کند: محاسبه فاصله تا همه نقاط|سریع: اعمال یک فرمول یا پیمایش درخت|
-|حافظه|نگهداری **کل** داده آموزش|نگهداری فقط پارامترهای مدل|
-|شکل مرز تصمیم|محلی و دلخواه|محدود به خانواده مدل|
-|افزودن داده جدید|فوری؛ فقط به داده اضافه می‌شود|نیاز به آموزش مجدد|
+```python
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.neighbors import KNeighborsClassifier
 
-هزینه پیش‌بینی یک نقطه با جست‌وجوی کامل، متناسب با تعداد نمونه‌ها ضرب در تعداد ویژگی‌هاست:
+# 1. Two known customers and a new one (income in thousand tomans)
+customers = pd.DataFrame({"age": [32, 60], "income": [50000, 22000], "label": ["buy", "no buy"]})
+new = pd.DataFrame({"age": [30], "income": [20000]})
+X, y = customers[["age", "income"]], customers["label"]
 
-$$ O(n \cdot p) \quad \text{per query} $$
+# 2. Without scaling: income dominates the distance
+knn = KNeighborsClassifier(n_neighbors=1).fit(X, y)
+print(f"raw:    distances={knn.kneighbors(new, 2)[0][0].round(1)}  prediction={knn.predict(new)[0]}")
 
-> [!tip] شتاب‌دهی جست‌وجو ساختارهای داده‌ای مانند **KD-Tree** و **Ball-Tree** جست‌وجوی همسایه را در ابعاد کم به‌طور چشمگیری سریع می‌کنند. پارامتر `algorithm="auto"` در scikit-learn به‌طور خودکار روش مناسب را انتخاب می‌کند. برای داده‌های بسیار بزرگ، روش‌های **جست‌وجوی تقریبی همسایه** (Approximate Nearest Neighbors) به کار می‌روند.
+# 3. Min-Max scaling with fixed ranges (age 20-60, income 10,000-60,000)
+scaler = MinMaxScaler().fit(pd.DataFrame({"age": [20, 60], "income": [10000, 60000]}))
+knn_s = KNeighborsClassifier(n_neighbors=1).fit(scaler.transform(X), y)
+d = knn_s.kneighbors(scaler.transform(new), 2)[0][0]
+print(f"scaled: distances={d.round(3)}  prediction={knn_s.predict(scaler.transform(new))[0]}")
+```
 
-### نفرین ابعاد
+```
+raw:    distances=[ 2000.2 30000. ]  prediction=no buy
+scaled: distances=[0.602 0.751]  prediction=buy
+```
 
-در ابعاد بالا، فاصله‌ها **معنای خود را از دست می‌دهند**: فاصله نزدیک‌ترین و دورترین نقطه تقریباً برابر می‌شود و مفهوم «همسایه نزدیک» بی‌معنا می‌شود ← [[۱۳ - مهندسی و انتخاب ویژگی]]
+### داده واقعی: تایتانیک
 
-> [!example] مثال — تمرکز فاصله‌ها ۵۰۰ نقطه تصادفی یکنواخت در مکعب واحد تولید و فاصله نقطه اول تا ۴۹۹ نقطه دیگر را محاسبه می‌کنیم:
-> 
-> |تعداد ابعاد|نسبت دورترین به نزدیک‌ترین فاصله|
-> |:-:|:-:|
-> |۲|46.78|
-> |۱۰|3.20|
-> |۱۰۰|1.41|
-> |۱۰۰۰|1.10|
-> 
-> در ۱۰۰۰ بعد، دورترین نقطه فقط حدود ۱۰ درصد دورتر از نزدیک‌ترین نقطه است. به همین دلیل k-NN در داده با ابعاد بالا ضعیف عمل می‌کند و پیش از آن **انتخاب ویژگی** یا **کاهش ابعاد** لازم است ← [[۱۴- کاهش ابعاد]]
+داده تایتانیک (۸۹۱ مسافر) را از جلسات پیش‌پردازش می‌شناسیم. در جلسات ۲۰ تا ۲۵ همین داده را با تنظیمات **یکسان** به کار می‌بریم تا مدل‌ها قابل مقایسه باشند:
 
-### جمع‌بندی مزایا و معایب
+- هدف: `survived` (زنده ماندن، کلاس مثبت ۱).
+- ویژگی‌های عددی: سن، کرایه، تعداد همسر و خواهر و برادر، تعداد والدین و فرزندان، کلاس سفر؛ ویژگی‌های کیفی: جنسیت و بندر سوار شدن.
+- تقسیم **طبقه‌بندی‌شده** با ۲۰ درصد آزمون و `random_state=42` ← [طراحی آزمایش و Pipeline](../Part%203_Data%20Preprocessing/%DB%B1%DB%B5%20-%20%D8%B7%D8%B1%D8%A7%D8%AD%DB%8C%20%D8%A2%D8%B2%D9%85%D8%A7%DB%8C%D8%B4%20%D9%88%20Pipeline.md)
+- پیش‌پردازش داخل Pipeline: جایگذاری میانه و استانداردسازی برای ستون‌های عددی، جایگذاری مد و One-Hot برای ستون‌های کیفی. همه این گام‌ها **یادگیرنده**‌اند و فقط روی داده آموزش `fit` می‌شوند.
+- اعتبارسنجی متقابل **طبقه‌بندی‌شده** پنج بخشی (`StratifiedKFold`) تا نسبت زنده‌ماندگان در هر بخش حفظ شود.
 
-|مزایا|معایب|
-|:-:|:-:|
-|بسیار ساده و قابل فهم|پیش‌بینی کند برای داده بزرگ|
-|بدون فرض درباره شکل توزیع داده (ناپارامتری)|نیاز به نگهداری کل داده آموزش|
-|مرز تصمیم انعطاف‌پذیر و غیرخطی|حساس به مقیاس ویژگی‌ها|
-|ذاتاً چندکلاسه|حساس به ویژگی‌های بی‌ربط و نویزی|
-|افزودن داده جدید بدون آموزش مجدد|ضعیف در ابعاد بالا (نفرین ابعاد)|
-|قابل استفاده برای رگرسیون نیز|بدون مدل قابل تفسیر (ضریب یا قاعده)|
+```python
+import seaborn as sns
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import make_pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.dummy import DummyClassifier
 
-> [!note] ویژگی‌های کیفی در k-NN برای ویژگی‌های کیفی باید ابتدا کدگذاری One-Hot انجام شود ← [[۱۲ - تبدیل و یکپارچه‌سازی داده]] در داده‌های ترکیبی (عددی و کیفی)، فاصله **گاور** (Gower) گزینه مناسب‌تری است اما در scikit-learn به‌طور مستقیم وجود ندارد ← [[۵ - معیارهای شباهت و فاصله]]
+# 1. Titanic: predict survival; the test set is locked (stratified split)
+titanic = sns.load_dataset("titanic")
+num = ["age", "fare", "sibsp", "parch", "pclass"]
+cat = ["sex", "embarked"]
+X_train, X_test, y_train, y_test = train_test_split(titanic[num + cat], titanic["survived"],
+                                                    test_size=0.2, stratify=titanic["survived"],
+                                                    random_state=42)
+print(f"train={len(X_train)}  test={len(X_test)}  survival rate={y_train.mean():.3f}")
+
+# 2. Preprocessing with or without standardization of the numeric columns
+def preprocess(scale):
+    num_steps = [SimpleImputer(strategy="median")] + ([StandardScaler()] if scale else [])
+    return ColumnTransformer([
+        ("num", make_pipeline(*num_steps), num),
+        ("cat", make_pipeline(SimpleImputer(strategy="most_frequent"),
+                              OneHotEncoder(handle_unknown="ignore")), cat)])
+
+# 3. Stratified 5-fold CV accuracy: baseline, k-NN without and with scaling
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+models = {"Baseline (majority class)": DummyClassifier(strategy="most_frequent"),
+          "5-NN, no scaling": make_pipeline(preprocess(False), KNeighborsClassifier(5)),
+          "5-NN, standardized": make_pipeline(preprocess(True), KNeighborsClassifier(5))}
+for name, model in models.items():
+    acc = cross_val_score(model, X_train, y_train, cv=cv, scoring="accuracy")
+    print(f"{name:26s} CV accuracy={acc.mean():.3f}")
+```
+
+```
+train=712  test=179  survival rate=0.383
+Baseline (majority class)  CV accuracy=0.617
+5-NN, no scaling           CV accuracy=0.706
+5-NN, standardized         CV accuracy=0.798
+```
+
+مدل پایه دقت ۰.۶۱۷ دارد (نسبت جان‌باختگان). بدون مقیاس‌بندی، کرایه (تا ۵۱۲ پوند) بر فاصله مسلط است و دقت فقط ۰.۷۰۶ است؛ با استانداردسازی به ۰.۷۹۸ می‌رسد: حدود **۹ واحد درصد** بهبود فقط با یک گام پیش‌پردازش.
+
+> [!tip] ویژگی‌های کیفی و معیار فاصله
+> ویژگی‌های کیفی ابتدا One-Hot می‌شوند ← [تبدیل و یکپارچه‌سازی داده](../Part%203_Data%20Preprocessing/%DB%B1%DB%B2%20-%20%D8%AA%D8%A8%D8%AF%DB%8C%D9%84%20%D9%88%20%DB%8C%DA%A9%D9%BE%D8%A7%D8%B1%DA%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D8%AF%D8%A7%D8%AF%D9%87.md). معیار فاصله را متناسب با داده انتخاب کنید: اقلیدسی (پیش‌فرض، `p=2`) برای ویژگی‌های عددی هم‌مقیاس، منهتن (`p=1`) با حساسیت کمتر به اختلاف بزرگ در یک ویژگی، کسینوسی برای متن و همینگ برای ویژگی‌های دودویی.
 
 ---
 
-## پیاده‌سازی در پایتون
+## انتخاب k
+
+| مقدار k | مرز تصمیم | بایاس | واریانس | خطر |
+|:---:|:---:|:---:|:---:|:---:|
+| برابر ۱ | بسیار نامنظم، جزیره‌های کوچک دور نقاط پرت | کم | زیاد | بیش‌برازش؛ دقت آموزش تقریباً ۱۰۰ درصد |
+| متوسط | هموارتر | متوسط | متوسط | — |
+| بسیار بزرگ (نزدیک n) | تقریباً ثابت: همیشه کلاس اکثریت | زیاد | کم | کم‌برازش |
+
+پیچیدگی k-NN با افزایش k **کم** می‌شود؛ برعکس درجه چندجمله‌ای. کد زیر مرز تصمیم را روی یک داده شبیه‌سازی‌شده دوبعدی (دو نیم‌ماه درهم با نویز) برای سه مقدار k رسم می‌کند:
 
 ```python
 import numpy as np
-import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+# 1. Two interleaving half-moons with noise (a simulated two-class problem)
+X, y = make_moons(n_samples=300, noise=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+
+# 2. A grid covering the plane, to colour each region by its predicted class
+xx, yy = np.meshgrid(np.linspace(-2, 3, 300), np.linspace(-1.5, 2, 300))
+grid = np.c_[xx.ravel(), yy.ravel()]
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 4.2), sharey=True)
+for ax, k in zip(axes, [1, 15, 150]):
+    knn = KNeighborsClassifier(n_neighbors=k).fit(X_train, y_train)
+    print(f"k={k:3d}  train accuracy={knn.score(X_train, y_train):.3f}  test accuracy={knn.score(X_test, y_test):.3f}")
+    ax.contourf(xx, yy, knn.predict(grid).reshape(xx.shape), alpha=0.3, cmap="coolwarm")
+    ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap="coolwarm", edgecolor="k", s=20)
+    ax.set(title=f"k = {k}", xlabel="x1")
+axes[0].set_ylabel("x2")
+plt.show()
+```
+
+```
+k=  1  train accuracy=1.000  test accuracy=0.878
+k= 15  train accuracy=0.895  test accuracy=0.889
+k=150  train accuracy=0.795  test accuracy=0.778
+```
+
+![moons knn boundaries](../img/moons_knn_boundaries.png)
+
+با k برابر ۱ دقت آموزش ۱۰۰ درصد است (هر نقطه نزدیک‌ترین همسایه خودش است) و مرز دور نقاط پرت جزیره می‌سازد. با k برابر ۱۵ مرز هموار و دقت آزمون بهترین است (۰.۸۸۹). با k برابر ۱۵۰ (نیمی از داده) مرز تقریباً خط راست است و هر دو دقت افت می‌کنند (کم‌برازش).
+
+روی تایتانیک، k و نوع رأی را با **جست‌وجوی شبکه‌ای** (`GridSearchCV`) و اعتبارسنجی متقابل انتخاب می‌کنیم. این کلاس همه ترکیب‌ها را می‌آزماید، بهترین را برمی‌گزیند و آن را روی کل داده آموزش دوباره آموزش می‌دهد:
+
+```python
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.datasets import load_iris, load_wine
-from sklearn.model_selection import (train_test_split, StratifiedKFold,
-                                     cross_val_score, GridSearchCV)
+from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
+from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-from sklearn.metrics import pairwise_distances
-```
 
-### پیاده‌سازی k-NN از صفر و مقایسه با scikit-learn
+# 1. Same Titanic data, split and preprocessing as before
+titanic = sns.load_dataset("titanic")
+num = ["age", "fare", "sibsp", "parch", "pclass"]
+cat = ["sex", "embarked"]
+X_train, X_test, y_train, y_test = train_test_split(titanic[num + cat], titanic["survived"],
+                                                    test_size=0.2, stratify=titanic["survived"],
+                                                    random_state=42)
+preprocess = ColumnTransformer([
+    ("num", make_pipeline(SimpleImputer(strategy="median"), StandardScaler()), num),
+    ("cat", make_pipeline(SimpleImputer(strategy="most_frequent"),
+                          OneHotEncoder(handle_unknown="ignore")), cat)])
+model = make_pipeline(preprocess, KNeighborsClassifier())
 
-```python
-from collections import Counter
-
-def knn_predict(X_train, y_train, q, k=3):
-    """Classify a single point q by majority vote of its k nearest neighbours."""
-    d = np.sqrt(((X_train - q) ** 2).sum(axis=1))      # Euclidean distances
-    idx = np.argsort(d, kind="stable")[:k]               # indices of k nearest
-    return Counter(y_train[idx]).most_common(1)[0][0]
-
-P = np.array([[3, 4], [1, 3], [4, 1], [5, 5], [6, 3], [1, 0]])
-labels = np.array(["B", "A", "A", "B", "B", "A"])
-q = np.array([3, 3])
-
-print(np.sqrt(((P - q) ** 2).sum(axis=1)).round(3))   # [1. 2. 2.236 2.828 3. 3.606]
-for k in [1, 3, 5]:
-    sk = KNeighborsClassifier(n_neighbors=k).fit(P, labels)
-    print(k, knn_predict(P, labels, q, k), sk.predict([q]), sk.predict_proba([q]).round(3))
-# 1 B ['B'] [[0. 1.]]
-# 3 A ['A'] [[0.667 0.333]]
-# 5 B ['B'] [[0.4 0.6]]
-
-weighted = KNeighborsClassifier(n_neighbors=3, weights="distance").fit(P, labels)
-print(weighted.predict([q]), weighted.predict_proba([q]).round(3))   # ['B'] [[0.486 0.514]]
-```
-
-### اثر مقیاس‌بندی
-
-```python
-# Two customers: [age, income in thousand toman]
-C = np.array([[32, 50000], [60, 22000]])
-q = np.array([30, 20000])
-print(np.sqrt(((C - q) ** 2).sum(axis=1)).round(1))        # [30000.   2000.2]  -> customer 2 nearest
-
-lo, hi = np.array([20, 10000]), np.array([60, 60000])
-Cs, qs = (C - lo) / (hi - lo), (q - lo) / (hi - lo)
-print(np.sqrt(((Cs - qs) ** 2).sum(axis=1)).round(3))      # [0.602 0.751]  -> customer 1 nearest
-
-# Wine: features on very different scales
-wine = load_wine(as_frame=True)
-Xw, yw = wine.data, wine.target
-print(Xw.std().round(2).sort_values().iloc[[0, -1]])        # nonflavanoid_phenols 0.12, proline 314.91
-
+# 2. Grid search over k (odd values) and the voting rule, with stratified 5-fold CV
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-for name, model in [("raw", KNeighborsClassifier(n_neighbors=5)),
-                    ("minmax", make_pipeline(MinMaxScaler(), KNeighborsClassifier(n_neighbors=5))),
-                    ("standard", make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5)))]:
-    print(name, cross_val_score(model, Xw, yw, cv=cv).mean().round(3))
-# raw 0.68   minmax 0.961   standard 0.972
-```
+grid = {"kneighborsclassifier__n_neighbors": range(1, 102, 2),
+        "kneighborsclassifier__weights": ["uniform", "distance"]}
+gs = GridSearchCV(model, grid, cv=cv, scoring="accuracy", return_train_score=True)
+gs.fit(X_train, y_train)
+print(f"best={gs.best_params_}  CV accuracy={gs.best_score_:.3f}")
 
-### داده Iris: تقسیم داده و انتخاب k
-
-```python
-iris = load_iris(as_frame=True)
-X, y = iris.data, iris.target
-print(X.shape, np.bincount(y))      # (150, 4) [50 50 50]
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42, stratify=y)
-
-k_values = range(1, 31)
-cv_acc = [cross_val_score(make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=k)),
-                          X_train, y_train, cv=cv).mean() for k in k_values]
-best_k = k_values[int(np.argmax(cv_acc))]
-print(best_k, round(max(cv_acc), 3))      # 8 0.971
-
+# 3. Validation curve for the uniform vote
+res = gs.cv_results_
+mask = np.array(res["param_kneighborsclassifier__weights"]) == "uniform"
+ks = np.array(res["param_kneighborsclassifier__n_neighbors"])[mask].astype(int)
 fig, ax = plt.subplots(figsize=(7, 4))
-ax.plot(k_values, cv_acc, marker="o")
-ax.axvline(best_k, color="red", linestyle="--", label=f"best k = {best_k}")
-ax.set(title="k-NN on Iris: CV accuracy vs k", xlabel="k (number of neighbours)",
-       ylabel="Mean CV accuracy")
+ax.plot(ks, res["mean_train_score"][mask], "o-", ms=3, label="Training")
+ax.plot(ks, res["mean_test_score"][mask], "s-", ms=3, label="Validation (5-fold CV)")
+ax.set(xlabel="k (number of neighbours)", ylabel="Accuracy", title="k-NN on Titanic")
 ax.legend()
 plt.show()
+
+# 4. The best model is refitted on the whole training set; test set used once
+print(f"test accuracy={gs.score(X_test, y_test):.3f}")
 ```
 
-### جست‌وجوی شبکه‌ای و ارزیابی نهایی
-
-```python
-pipe = make_pipeline(StandardScaler(), KNeighborsClassifier())
-param_grid = {
-    "kneighborsclassifier__n_neighbors": range(1, 31),
-    "kneighborsclassifier__weights": ["uniform", "distance"],
-    "kneighborsclassifier__p": [1, 2],
-}
-gs = GridSearchCV(pipe, param_grid, cv=cv).fit(X_train, y_train)
-print(gs.best_params_, round(gs.best_score_, 3))
-# {'..n_neighbors': 8, '..p': 1, '..weights': 'uniform'} 0.971
-
-y_pred = gs.predict(X_test)
-print(round(accuracy_score(y_test, y_pred), 3))      # 0.911
-print(confusion_matrix(y_test, y_pred))
-# [[15  0  0]
-#  [ 0 15  0]
-#  [ 0  4 11]]
-
-ConfusionMatrixDisplay.from_predictions(y_test, y_pred, display_labels=iris.target_names)
-plt.title("k-NN on Iris test set")
-plt.show()
-
-# Class probabilities for the first three test flowers
-print(gs.predict_proba(X_test.iloc[:3]).round(3))
-# [[0.    0.    1.   ]
-#  [0.    1.    0.   ]
-#  [0.    0.625 0.375]]   5 of 8 neighbours vote versicolor
+```
+best={'kneighborsclassifier__n_neighbors': 17, 'kneighborsclassifier__weights': 'uniform'}  CV accuracy=0.826
+test accuracy=0.810
 ```
 
-### رسم مرز تصمیم برای چند مقدار k
+![titanic knn validation curve](../img/titanic_knn_validation_curve.png)
+
+با k برابر ۱ دقت آموزش ۰.۹۸ ولی دقت اعتبارسنجی فقط ۰.۷۵ است (بیش‌برازش). بهترین مقدار k برابر **۱۷** با دقت اعتبارسنجی ۰.۸۲۶ است و پس از آن هر دو منحنی به‌تدریج پایین می‌آیند (کم‌برازش). دقت آزمون مدل منتخب ۰.۸۱۰ است، در برابر ۰.۶۱۷ مدل پایه.
+
+> [!important] قاعده
+> دقت آموزش k-NN با k کوچک هیچ اطلاعاتی درباره عملکرد واقعی نمی‌دهد. k را **فقط** با اعتبارسنجی متقابل انتخاب کنید؛ مقدار اولیه حدود جذر n پیشنهاد خوبی برای شروع جست‌وجوست.
+
+---
+
+## یادگیری تنبل و نفرین ابعاد
+
+الگوریتم k-NN در آموزش **هیچ کاری** جز ذخیره داده نمی‌کند و همه محاسبات را به زمان پیش‌بینی موکول می‌کند؛ به آن **یادگیری تنبل** (Lazy Learning) می‌گویند.
+
+| جنبه | یادگیری تنبل (k-NN) | یادگیری مشتاق (رگرسیون لجستیک، درخت) |
+|:---:|:---:|:---:|
+| آموزش | فقط ذخیره داده؛ تقریباً آنی | ساخت مدل؛ ممکن است زمان‌بر باشد |
+| پیش‌بینی | کند: فاصله تا همه نقاط، از مرتبه n ضرب در p برای هر نقطه | سریع: اعمال یک فرمول یا پیمایش درخت |
+| حافظه | نگهداری **کل** داده آموزش | فقط پارامترهای مدل |
+| افزودن داده جدید | فوری | نیاز به آموزش مجدد |
+
+ساختارهایی مانند **KD-Tree** و **Ball-Tree** جست‌وجوی همسایه را در ابعاد کم سریع می‌کنند (`algorithm="auto"` خودکار انتخاب می‌کند).
+
+در ابعاد بالا فاصله‌ها **معنای خود را از دست می‌دهند**: فاصله نزدیک‌ترین و دورترین نقطه تقریباً برابر می‌شود (**نفرین ابعاد** ← [مهندسی و انتخاب ویژگی](../Part%203_Data%20Preprocessing/%DB%B1%DB%B3%20-%20%D9%85%D9%87%D9%86%D8%AF%D8%B3%DB%8C%20%D9%88%20%D8%A7%D9%86%D8%AA%D8%AE%D8%A7%D8%A8%20%D9%88%DB%8C%DA%98%DA%AF%DB%8C.md)). کد زیر ۵۰۰ نقطه تصادفی در مکعب واحد می‌سازد و نسبت دورترین به نزدیک‌ترین فاصله از نقطه اول را حساب می‌کند:
 
 ```python
-feats = ["sepal length (cm)", "sepal width (cm)"]
-X2_train, X2_test = X_train[feats], X_test[feats]
+import numpy as np
+from sklearn.metrics import pairwise_distances
 
-xx, yy = np.meshgrid(np.linspace(X[feats[0]].min() - 0.5, X[feats[0]].max() + 0.5, 300),
-                     np.linspace(X[feats[1]].min() - 0.5, X[feats[1]].max() + 0.5, 300))
-grid = pd.DataFrame(np.c_[xx.ravel(), yy.ravel()], columns=feats)
-
-fig, axes = plt.subplots(1, 3, figsize=(16, 4.5), sharey=True)
-for ax, k in zip(axes, [1, 15, 50]):
-    model = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=k)).fit(X2_train, y_train)
-    Z = model.predict(grid).reshape(xx.shape)
-    ax.contourf(xx, yy, Z, alpha=0.3, cmap="viridis")
-    sns.scatterplot(x=X2_train[feats[0]], y=X2_train[feats[1]], hue=iris.target_names[y_train],
-                    palette="viridis", edgecolor="k", ax=ax, legend=(k == 1))
-    tr, te = model.score(X2_train, y_train), model.score(X2_test, y_test)
-    ax.set(title=f"k = {k}  (train {tr:.2f}, test {te:.2f})",
-           xlabel="Sepal length (cm)", ylabel="Sepal width (cm)")
-plt.tight_layout()
-plt.show()
-# k = 1:  train 0.94, test 0.71
-# k = 15: train 0.83, test 0.67
-# k = 50: train 0.83, test 0.69
-```
-
-### نفرین ابعاد
-
-```python
+# Ratio of farthest to nearest distance from one point to 499 random points in a unit cube
 rng = np.random.default_rng(42)
-for d in [2, 10, 100, 1000]:
-    Z = rng.random((500, d))
-    dist = pairwise_distances(Z[:1], Z[1:])[0]
-    print(d, round(dist.max() / dist.min(), 2))
-# 2 46.78   10 3.2   100 1.41   1000 1.1
+for p in [2, 10, 100, 1000]:
+    X = rng.uniform(size=(500, p))
+    d = pairwise_distances(X[:1], X[1:])[0]
+    print(f"dimensions={p:4d}  farthest/nearest={d.max() / d.min():.2f}")
 ```
 
----
+```
+dimensions=   2  farthest/nearest=46.78
+dimensions=  10  farthest/nearest=3.20
+dimensions= 100  farthest/nearest=1.41
+dimensions=1000  farthest/nearest=1.10
+```
 
-## تمرین عملی کلاس
+در ۱۰۰۰ بعد، دورترین نقطه فقط ۱۰ درصد دورتر از نزدیک‌ترین است. پس پیش از k-NN در داده با ابعاد بالا، **انتخاب ویژگی** یا **کاهش ابعاد** لازم است ← [کاهش ابعاد](../Part%203_Data%20Preprocessing/%DB%B1%DB%B4-%20%DA%A9%D8%A7%D9%87%D8%B4%20%D8%A7%D8%A8%D8%B9%D8%A7%D8%AF.md)
 
-> [!example] تمرین عملی (۲۵ دقیقه) داده Iris را بارگذاری و با `test_size=0.3`، `stratify=y` و `random_state=42` تقسیم کنید.
-> 
-> 1. فقط با دو ویژگی **طول و عرض گلبرگ** (petal length و petal width) یک `Pipeline` شامل `StandardScaler` و `KNeighborsClassifier` بسازید.
-> 2. برای k برابر ۱، ۱۵ و ۵۰ دقت آموزش و آزمون را گزارش و مرز تصمیم هر سه را رسم کنید.
-> 3. همین کار را برای دو ویژگی **کاسبرگ** (sepal) تکرار کنید. کدام جفت ویژگی کلاس‌ها را بهتر جدا می‌کند؟ چرا؟
-> 4. با هر چهار ویژگی، بهترین k را با `GridSearchCV` (اعتبارسنجی ۵-تایی طبقه‌بندی‌شده با shuffle و random_state برابر ۴۲) پیدا کنید و دقت آزمون و ماتریس درهم‌ریختگی را گزارش کنید. کدام دو گونه بیشتر با هم اشتباه گرفته می‌شوند؟
-> 5. روی داده Wine دقت اعتبارسنجی k-NN با k برابر ۵ را با و بدون `StandardScaler` مقایسه کنید.
+| مزایا | معایب |
+|:---:|:---:|
+| بسیار ساده و قابل فهم | پیش‌بینی کند برای داده بزرگ |
+| بدون فرض درباره شکل توزیع (ناپارامتری) | نگهداری کل داده آموزش |
+| مرز تصمیم انعطاف‌پذیر و ذاتاً چندکلاسه | حساس به مقیاس و ویژگی‌های بی‌ربط |
+| قابل استفاده برای رگرسیون ← [منظم‌سازی در رگرسیون](../Part%204_Regression/19%20-%20%D9%85%D9%86%D8%B8%D9%85%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D8%AF%D8%B1%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86.md) | ضعیف در ابعاد بالا؛ بدون مدل قابل تفسیر |
 
-> [!question]- پاسخ‌های کلیدی تمرین
-> 
-> - با ویژگی‌های گلبرگ:
-> 
-> |مقدار k|دقت آموزش|دقت آزمون|
-> |:-:|:-:|:-:|
-> |۱|0.990|1.000|
-> |۱۵|0.981|0.911|
-> |۵۰|0.981|0.911|
-> 
-> - با ویژگی‌های کاسبرگ: دقت آزمون برای k برابر ۱، ۱۵ و ۵۰ به ترتیب حدود ۰.۷۱، ۰.۶۷ و ۰.۶۹ است. ویژگی‌های **گلبرگ** کلاس‌ها را بسیار بهتر جدا می‌کنند؛ در نمودار پراکندگی آن‌ها، Setosa کاملاً جداست و Versicolor و Virginica هم‌پوشانی کمی دارند، در حالی که در ویژگی‌های کاسبرگ این دو گونه به‌شدت هم‌پوشانی دارند. انتخاب ویژگی‌های خوب از انتخاب k مهم‌تر است.
-> - دقت آموزش ۰.۹۹۰ برای k برابر ۱ (نه ۱۰۰ درصد) به دلیل نقاط **تکراری** با برچسب متفاوت است: چند گل Versicolor و Virginica ابعاد گلبرگ یکسان دارند.
-> - با چهار ویژگی، بهترین k برابر **۸** با دقت اعتبارسنجی **۰.۹۷۱** و دقت آزمون **۰.۹۱۱** است. هر چهار خطا مربوط به گل‌های **Virginica** است که Versicolor پیش‌بینی شده‌اند؛ Setosa هیچ خطایی ندارد.
-> - روی داده Wine: بدون مقیاس‌بندی **۰.۶۸۰** و با استانداردسازی **۰.۹۷۲**.
+> [!note] کارگاه عملی
+> دفترچه «۲۰ - کارگاه مبانی طبقه‌بندی و k-NN» مقایسه معیارهای فاصله و تمرین عملی کلاس (طبقه‌بندی گل زنبق با k-NN و رسم مرز تصمیم) را با پاسخ دارد. نحوه نوشتن این کدها در امتحان پرسیده نمی‌شود.
 
 ---
 
-## پرسش‌های مرور
+## خطاهای رایج
 
-> [!question]- ۱. تفاوت طبقه‌بندی دودویی، چندکلاسه و چندبرچسبی چیست؟ برای هر کدام مثالی بزنید. در دودویی دو کلاس داریم (هرزنامه یا عادی). در چندکلاسه بیش از دو کلاس داریم و هر نمونه دقیقاً یک کلاس دارد (گونه گل). در چندبرچسبی هر نمونه می‌تواند هم‌زمان چند برچسب داشته باشد (یک فیلم هم «کمدی» و هم «عاشقانه»).
+| خطا | چرا نادرست است | روش درست |
+|:---:|:---:|:---:|
+| اجرای k-NN بدون مقیاس‌بندی | ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند | استانداردسازی داخل Pipeline |
+| انتخاب k با دقت آموزش | با k برابر ۱ دقت آموزش تقریباً ۱۰۰ درصد است | انتخاب k با اعتبارسنجی متقابل |
+| گزارش دقت بدون مدل پایه | دقت ۷۰ درصد وقتی کلاس اکثریت ۶۲ درصد است چندان خوب نیست | مقایسه با DummyClassifier |
+| تقسیم ساده در داده نامتوازن | نسبت کلاس‌ها در آموزش، آزمون و بخش‌ها به هم می‌خورد | تقسیم و اعتبارسنجی طبقه‌بندی‌شده |
+| مقدار k زوج در مسئله دودویی | رأی مساوی پیش می‌آید | مقدار k فرد یا رأی وزن‌دار |
+| ورود صدها ویژگی بی‌ربط به k-NN | نفرین ابعاد؛ فاصله‌ها بی‌معنا می‌شوند | انتخاب ویژگی یا کاهش ابعاد |
 
-> [!question]- ۲. در مثال شش نقطه، اگر نقطه جدید (۵، ۳) باشد، پیش‌بینی 1-NN و 3-NN چیست؟ فاصله‌ها تا (۵، ۳): نقطه ۵ با مختصات (۶، ۳) برابر ۱ (کلاس B)، نقطه ۴ با مختصات (۵، ۵) برابر ۲ (کلاس B)، نقطه ۱ با مختصات (۳، ۴) برابر √۵ ≈ ۲.۲۴ (کلاس B) و نقطه ۳ با مختصات (۴، ۱) نیز √۵ ≈ ۲.۲۴ (کلاس A). پیش‌بینی 1-NN کلاس **B** است. برای 3-NN دو همسایه اول B هستند، پس صرف‌نظر از اینکه همسایه سوم نقطه ۱ باشد یا نقطه ۳، اکثریت با **B** است.
+---
 
-> [!question]- ۳. چرا k-NN با k برابر ۱ روی داده آموزش تقریباً دقت ۱۰۰ درصد دارد؟ این عدد چه چیزی را نشان می‌دهد؟ چون هر نقطه آموزش نزدیک‌ترین همسایه خودش است (با فاصله صفر) و برچسب خودش را پیش‌بینی می‌کند. این عدد هیچ اطلاعاتی درباره تعمیم ندارد و فقط نشان می‌دهد مدل داده آموزش را **حفظ** کرده است. فقط استثنا، نقاط تکراری با برچسب متفاوت است.
+## نمونه سؤال‌های امتحانی
 
-> [!question]- ۴. چرا مقیاس‌بندی برای k-NN حیاتی اما برای درخت تصمیم بی‌اهمیت است؟ الگوریتم k-NN بر پایه فاصله است و ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند. درخت تصمیم هر ویژگی را **جداگانه** با یک آستانه مقایسه می‌کند؛ تغییر مقیاس یکنوا فقط مقدار آستانه را تغییر می‌دهد و ساختار درخت ثابت می‌ماند.
+### سؤال‌های مفهومی
 
-> [!question]- ۵. چرا k-NN «یادگیرنده تنبل» نامیده می‌شود؟ یک مزیت و یک عیب این ویژگی را بگویید. چون در مرحله آموزش هیچ مدلی نمی‌سازد و فقط داده را ذخیره می‌کند؛ همه محاسبات در زمان پیش‌بینی انجام می‌شود. مزیت: افزودن داده جدید فوری است و نیازی به آموزش مجدد نیست. عیب: پیش‌بینی برای داده بزرگ کند است و کل داده باید در حافظه بماند.
+> [!question]- ۱. تفاوت طبقه‌بندی دودویی، چندکلاسه و چندبرچسبی چیست؟ برای هر کدام مثالی بزنید.
+> در دودویی دو کلاس داریم (زنده ماندن یا نماندن). در چندکلاسه بیش از دو کلاس داریم و هر نمونه دقیقاً یک کلاس دارد (گونه گل). در چندبرچسبی هر نمونه می‌تواند هم‌زمان چند برچسب داشته باشد (فیلمی هم «کمدی» و هم «عاشقانه»).
 
-> [!question]- ۶. داده‌ای با ۵۰۰ ویژگی دارید که فقط ۱۰ ویژگی آن مرتبط با هدف است. آیا k-NN گزینه مناسبی است؟ چه پیشنهادی دارید؟ به‌تنهایی خیر. ۴۹۰ ویژگی بی‌ربط در محاسبه فاصله سهم دارند و نویز آن‌ها فاصله‌ها را بی‌معنا می‌کند (نفرین ابعاد). پیش از k-NN باید **انتخاب ویژگی** (مثلاً با اطلاعات متقابل یا Lasso) یا **کاهش ابعاد** (مثلاً PCA) انجام داد، یا از مدلی استفاده کرد که خودش ویژگی‌های مهم را تشخیص می‌دهد.
+> [!question]- ۲. چرا k-NN با k برابر ۱ روی داده آموزش تقریباً دقت ۱۰۰ درصد دارد؟ این عدد چه چیزی را نشان می‌دهد؟
+> چون هر نقطه آموزش نزدیک‌ترین همسایه خودش است (با فاصله صفر). این عدد فقط نشان می‌دهد مدل داده آموزش را **حفظ** کرده و درباره تعمیم اطلاعاتی نمی‌دهد. استثنا، نقاط تکراری با برچسب متفاوت است.
+
+> [!question]- ۳. چرا مقیاس‌بندی برای k-NN حیاتی اما برای درخت تصمیم بی‌اهمیت است؟
+> الگوریتم k-NN بر پایه فاصله است و ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند. درخت تصمیم هر ویژگی را **جداگانه** با یک آستانه مقایسه می‌کند؛ تغییر مقیاس فقط مقدار آستانه را عوض می‌کند.
+
+> [!question]- ۴. چرا k-NN «یادگیرنده تنبل» نامیده می‌شود؟ یک مزیت و یک عیب آن را بگویید.
+> چون در آموزش مدلی نمی‌سازد و فقط داده را ذخیره می‌کند. مزیت: افزودن داده جدید فوری است. عیب: پیش‌بینی برای داده بزرگ کند است و کل داده باید در حافظه بماند.
+
+> [!question]- ۵. داده‌ای با ۵۰۰ ویژگی دارید که فقط ۱۰ ویژگی آن مرتبط است. آیا k-NN مناسب است؟
+> به‌تنهایی خیر. ۴۹۰ ویژگی بی‌ربط در فاصله سهم دارند و نویز آن‌ها فاصله‌ها را بی‌معنا می‌کند (نفرین ابعاد). پیش از k-NN باید **انتخاب ویژگی** یا **کاهش ابعاد** انجام داد.
+
+### سؤال‌های محاسباتی
+
+> [!question]- ۶. در مثال شش نقطه، اگر نقطه جدید (۵، ۳) باشد، پیش‌بینی 1-NN و 3-NN چیست؟
+> فاصله‌ها تا (۵، ۳): نقطه ۵ برابر ۱ (B)، نقطه ۴ برابر ۲ (B)، نقطه ۱ و نقطه ۳ هر دو برابر جذر ۵ یعنی حدود ۲.۲۴ (B و A). پیش‌بینی 1-NN کلاس **B** است. برای 3-NN دو همسایه اول B هستند، پس صرف‌نظر از همسایه سوم، اکثریت با **B** است.
+
+> [!question]- ۷. در همان مثال با نقطه جدید (۳، ۳) و k برابر ۵، رأی وزن‌دار چه پیش‌بینی می‌کند؟
+> وزن‌ها: نقطه ۱ (B) برابر ۱، نقطه ۲ (A) برابر ۰.۵، نقطه ۳ (A) حدود ۰.۴۴۷، نقطه ۴ (B) برابر ۱ تقسیم بر ۲.۸۲۸ یعنی حدود ۰.۳۵۴ و نقطه ۵ (B) برابر ۱ تقسیم بر ۳ یعنی حدود ۰.۳۳۳.
+> $$
+> \text{score}(A) = 0.5 + 0.447 = 0.947, \qquad \text{score}(B) = 1 + 0.354 + 0.333 = 1.687
+> $$
+> پیش‌بینی **B** است.
+
+> [!question]- ۸. داده‌ای ۱۰۰۰ نمونه دارد که ۹۰۰ تای آن کلاس منفی است. مدلی دقت ۸۸ درصد دارد. آیا مدل خوبی است؟
+> خیر. مدل پایه «همیشه منفی» دقت ۹۰۰ تقسیم بر ۱۰۰۰، یعنی **۹۰ درصد** دارد؛ این مدل حتی از مدل پایه بدتر است.
+
+### سؤال‌های خواندن کد
+
+> [!question]- ۹. ایراد این کد چیست؟
+> ```python
+> model = KNeighborsClassifier(n_neighbors=5).fit(X_train, y_train)
+> ```
+> اگر ستون‌ها مقیاس‌های متفاوت دارند (مثلاً سن و کرایه)، ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند. باید `make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5))` نوشت.
+
+> [!question]- ۱۰. خروجی `knn.predict_proba(q)` برای یک مدل با k برابر ۵ و دو کلاس چه مقادیری می‌تواند داشته باشد؟
+> هر احتمال نسبت همسایه‌های آن کلاس است؛ پس فقط مقادیر ۰، ۰.۲، ۰.۴، ۰.۶، ۰.۸ و ۱ ممکن است (با رأی ساده) و مجموع دو احتمال ۱ است.
+
+> [!question]- ۱۱. در `GridSearchCV` با شبکه زیر و `cv=5`، مدل چند بار آموزش می‌بیند؟
+> ```python
+> grid = {"kneighborsclassifier__n_neighbors": range(1, 102, 2),
+>         "kneighborsclassifier__weights": ["uniform", "distance"]}
+> ```
+> تعداد مقادیر k برابر ۵۱ و دو نوع رأی، یعنی ۱۰۲ ترکیب؛ هر ترکیب ۵ بار، یعنی **۵۱۰** بار، و یک بار دیگر برای آموزش بهترین مدل روی کل داده آموزش.
 
 ---
 
 ## نکات کلیدی
 
 > [!summary] خلاصه جلسه
-> 
-> - در **طبقه‌بندی** متغیر هدف کیفی است؛ مسئله می‌تواند **دودویی** یا **چندکلاسه** باشد. طبقه‌بند فضای ویژگی را با **مرز تصمیم** به ناحیه‌های کلاس‌ها تقسیم می‌کند.
-> - الگوریتم **k-NN**: فاصله تا همه نقاط آموزش، انتخاب k نزدیک‌ترین، رأی اکثریت. با **رأی وزن‌دار**، همسایه‌های نزدیک‌تر اثر بیشتری دارند.
-> - مقدار **k** پیچیدگی را کنترل می‌کند: k کوچک یعنی بیش‌برازش و k بزرگ یعنی کم‌برازش. k را با **اعتبارسنجی متقابل** انتخاب کنید.
-> - **مقیاس‌بندی** برای k-NN حیاتی است (در داده Wine دقت را از ۰.۶۸ به ۰.۹۷ رساند). معیار فاصله را متناسب با نوع داده انتخاب کنید.
-> - الگوریتم k-NN یک **یادگیرنده تنبل** است: آموزش آنی، پیش‌بینی کند، حافظه زیاد. در **ابعاد بالا** به دلیل تمرکز فاصله‌ها ضعیف عمل می‌کند.
-> - تا جلسه ۲۵ از **دقت** استفاده می‌کنیم، اما در داده نامتوازن گمراه‌کننده است.
-
-> [!todo] آمادگی برای جلسه بعد
-> 
-> 1. اگر هدف پروژه شما کیفی است، یک مدل k-NN داخل Pipeline (با مقیاس‌بندی و کدگذاری) بسازید و k را با اعتبارسنجی متقابل تنظیم کنید. اگر هدف عددی است، فکر کنید با چه آستانه معناداری می‌توان آن را به کلاس تبدیل کرد.
-> 2. قضیه بیز و مفهوم احتمال شرطی را مرور کنید.
-> 3. جلسه بعد دو طبقه‌بند **احتمالاتی** را می‌بینیم که به جای همسایه‌ها، مستقیماً احتمال کلاس را مدل می‌کنند ← [[21 - بیز ساده و رگرسیون لجستیک]]
+> - در **طبقه‌بندی** متغیر هدف کیفی است؛ مسئله **دودویی** یا **چندکلاسه** است و طبقه‌بند فضای ویژگی را با **مرز تصمیم** تقسیم می‌کند.
+> - الگوریتم **k-NN**: فاصله تا همه نقاط آموزش، انتخاب k نزدیک‌ترین و رأی اکثریت؛ با **رأی وزن‌دار** همسایه‌های نزدیک‌تر اثر بیشتری دارند.
+> - مقدار **k** پیچیدگی را کنترل می‌کند: k کوچک بیش‌برازش و k بزرگ کم‌برازش. روی تایتانیک بهترین k برابر ۱۷ با دقت آزمون ۰.۸۱۰ (در برابر ۰.۶۱۷ مدل پایه) بود.
+> - **مقیاس‌بندی** برای k-NN حیاتی است؛ روی تایتانیک دقت را از ۰.۷۰۶ به ۰.۷۹۸ رساند.
+> - الگوریتم k-NN **یادگیرنده تنبل** است و در **ابعاد بالا** به دلیل تمرکز فاصله‌ها ضعیف عمل می‌کند.
