@@ -1,10 +1,11 @@
 # GitHub Pages site for the lecture notes.
-# Built by .github/workflows/pages.yml, which copies the notes into docs/ first
-# (the notes stay where they are, so the Obsidian vault is unchanged).
-site_name: یادگیری عمیق — جزوه‌های درس
-site_url: https://haghbinh.github.io/deep-learning-course/
-repo_url: https://github.com/haghbinh/deep-learning-course
-repo_name: haghbinh/deep-learning-course
+# Built by .github/workflows/pages.yml (web/build.sh copies the notes into docs/
+# first, so the Obsidian vault is unchanged; web/make_pdfs.py then makes the PDFs).
+site_name: داده‌کاوی
+site_description: جزوه‌های درس داده‌کاوی، دکتر حسین حق‌بین، دانشگاه خلیج فارس
+site_url: https://haghbinh.github.io/DM_Course/
+repo_url: https://github.com/haghbinh/DM_Course
+repo_name: haghbinh/DM_Course
 edit_uri: ""
 docs_dir: docs
 site_dir: site
@@ -41,21 +42,46 @@ theme:
     - content.code.copy
 
 nav:
-  - صفحهٔ اصلی: index.md
-  - "فصل ۱۰ — شبکه‌های کانولوشنی":
-      - "جلسه 1": Chapter 10/Sec 1.md
-      - "جلسه 2": Chapter 10/Sec 2.md
-      - "جلسه 3": Chapter 10/Sec 3.md
-      - "جلسه 4": Chapter 10/Sec 4.md
-      - "پروژه 1": Chapter 10/Sec 4_hw1.md
-  - "فصل ۱۱ — شبکه‌های باقیمانده":
-      - "جلسه 5": Chapter 11/Sec 5.md
-      - "جلسه 6": Chapter 11/Sec 6.md
-      - "جلسه 7": Chapter 11/Sec 7.md
-      - "پروژه 2": Chapter 11/Sec 7_hw2.md
-  - "شبکه‌های بازگشتی (پیش‌زمینهٔ فصل ۱۲)":
-      - "جلسه 8": Chapter 12/Sec 8.md
-      - "جلسه 9": Chapter 12/Sec 9.md
+  - "صفحه اصلی": index.md
+  - "طرح درس": "Teaching Plan.md"
+  - "بخش ۰: مقدمه":
+      - "جلسه ۱: مقدمه‌ای بر داده‌کاوی": "Part 0_Introduction/۱ - مقدمه‌ای بر داده‌کاوی.md"
+      - "جلسه ۲: فرایند CRISP-DM و محیط کار": "Part 0_Introduction/2 - فرایند CRISP-DM و محیط کار.md"
+  - "بخش ۱: شناخت داده":
+      - "جلسه ۳: انواع داده و ویژگی‌ها": "Part 1_Data Understanding/۳ - انواع داده و ویژگی‌ها.md"
+      - "جلسه ۴: آمار توصیفی": "Part 1_Data Understanding/4 - آمار توصیفی.md"
+      - "جلسه ۵: معیارهای شباهت و فاصله": "Part 1_Data Understanding/۵ - معیارهای شباهت و فاصله.md"
+      - "جلسه ۶: کیفیت داده": "Part 1_Data Understanding/۶ - کیفیت داده.md"
+  - "بخش ۲: تحلیل اکتشافی داده":
+      - "جلسه ۷: تحلیل تک‌متغیره": "Part 2_EDA/۷ - تحلیل تک‌متغیره.md"
+      - "جلسه ۸: تحلیل دومتغیره و چندمتغیره": "Part 2_EDA/8 - تحلیل دومتغیره و چندمتغیره.md"
+      - "جلسه ۹: مطالعه موردی EDA": "Part 2_EDA/9 - مطالعه موردی EDA.md"
+  - "بخش ۳: پیش‌پردازش داده":
+      - "جلسه ۱۰: مدیریت داده گمشده": "Part 3_Data Preprocessing/۱۰ - مدیریت داده گمشده.md"
+      - "جلسه ۱۱: داده پرت، نویز و داده تکراری": "Part 3_Data Preprocessing/11- داده پرت، نویز و داده تکراری.md"
+      - "جلسه ۱۲: تبدیل و یکپارچه‌سازی داده": "Part 3_Data Preprocessing/۱۲ - تبدیل و یکپارچه‌سازی داده.md"
+      - "جلسه ۱۳: مهندسی و انتخاب ویژگی": "Part 3_Data Preprocessing/۱۳ - مهندسی و انتخاب ویژگی.md"
+      - "جلسه ۱۴: کاهش ابعاد": "Part 3_Data Preprocessing/۱۴- کاهش ابعاد.md"
+      - "جلسه ۱۵: طراحی آزمایش و Pipeline": "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md"
+      - "پروژه ۱: کیفیت هوای یک شهر": "Part 3_Data Preprocessing/پروژه 1- کیفیت هوای یک شهر.md"
+  - "بخش ۴: رگرسیون":
+      - "جلسه ۱۶: مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده": "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md"
+      - "جلسه ۱۷: رگرسیون خطی چندگانه و ارزیابی": "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md"
+      - "جلسه ۱۸: بیش‌برازش و اعتبارسنجی متقابل": "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md"
+      - "جلسه ۱۹: منظم‌سازی در رگرسیون": "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md"
+  - "بخش ۵: طبقه‌بندی":
+      - "جلسه ۲۰: مبانی طبقه‌بندی و k-NN": "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md"
+      - "جلسه ۲۱: بیز ساده و رگرسیون لجستیک": "Part 5_Classification/21 - بیز ساده و رگرسیون لجستیک.md"
+      - "جلسه ۲۲: درخت تصمیم": "Part 5_Classification/22 - درخت تصمیم.md"
+      - "جلسه ۲۳: روش‌های گروهی": "Part 5_Classification/23 - روش‌های گروهی.md"
+      - "جلسه ۲۴: ماشین بردار پشتیبان": "Part 5_Classification/24 -  ماشین بردار پشتیبان.md"
+      - "جلسه ۲۵: ارزیابی مدل‌های طبقه‌بندی": "Part 5_Classification/25 - ارزیابی مدل‌های طبقه‌بندی.md"
+  - "بخش ۶: خوشه‌بندی":
+      - "جلسه ۲۶: مبانی خوشه‌بندی و k-Means": "Part 6_Clustering/26 - مبانی خوشه‌بندی و k-Means.md"
+      - "جلسه ۲۷: خوشه‌بندی سلسله‌مراتبی": "Part 6_Clustering/27 - خوشه‌بندی سلسله‌مراتبی.md"
+      - "جلسه ۲۸: خوشه‌بندی چگالی‌محور و مبتنی بر مدل": "Part 6_Clustering/28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل.md"
+      - "جلسه ۲۹: ارزیابی و تفسیر خوشه‌ها": "Part 6_Clustering/29 - ارزیابی و تفسیر خوشه‌ها.md"
+      - "جلسه ۳۰: جمع‌بندی و ارائه پروژه‌ها": "Part 6_Clustering/30 - جمع‌بندی و ارائه پروژه‌ها.md"
 
 hooks:
   - web/hooks.py
@@ -78,6 +104,9 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
   - tables
+  - footnotes
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - attr_list
   - md_in_html
   - toc:
