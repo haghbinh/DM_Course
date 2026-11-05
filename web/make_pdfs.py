@@ -333,7 +333,7 @@ def merge(cover_pdf, parts, out_path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("site_dir", nargs="?", default="site")
-    ap.add_argument("--config", default="web/mkdocs.yml")
+    ap.add_argument("--config", default="mkdocs.yml")
     ap.add_argument("--offline", help="folder with local MathJax/mermaid/font (testing only)")
     args = ap.parse_args()
 

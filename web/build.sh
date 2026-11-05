@@ -6,4 +6,4 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 rm -rf docs site
 python web/prepare_docs.py
-mkdocs build --strict --config-file web/mkdocs.yml
+mkdocs build --strict
