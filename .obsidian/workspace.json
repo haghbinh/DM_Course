@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
-                "mode": "source",
+                "file": "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "17 - رگرسیون خطی چندگانه و ارزیابی"
+              "title": "18 - بیش‌برازش و اعتبارسنجی متقابل"
             }
           }
         ],
@@ -284,8 +284,8 @@
             "state": {
               "type": "persian-calendar",
               "state": {},
-              "icon": "calendar-heart",
-              "title": "Persian Calendar"
+              "icon": "lucide-ghost",
+              "title": "persian-calendar"
             }
           }
         ],
@@ -304,22 +304,28 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false,
-      "obsidian-excalidraw-plugin:New drawing": false,
-      "jupyter-notebook:Create Jupyter Notebook": false
+      "bases:Create new base": false
     }
   },
-  "active": "efb3529f50982590",
+  "active": "b5102a05106a6c3a",
   "lastOpenFiles": [
+    "img/mpg_validation_curve.png",
+    "Part 4_Regression/18 - کارگاه بیش‌برازش و اعتبارسنجی متقابل.ipynb",
+    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
+    "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
+    "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
+    "Part 5_Classification/25 - ارزیابی مدل‌های طبقه‌بندی.md",
+    "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
+    "Part 5_Classification/23 - روش‌های گروهی.md",
+    "Part 5_Classification/22 - درخت تصمیم.md",
+    "Part 5_Classification/21 - بیز ساده و رگرسیون لجستیک.md",
+    "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
     "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md",
     "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md",
     "Part 2_EDA/9 - مطالعه موردی EDA.md",
-    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
     "Untitled.md",
     "img/mpg_power_model.png",
     "img/house_actual_vs_predicted.png",
-    "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
-    "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
     "Teaching Plan.md",
     "README.md",
     "Part 3_Data Preprocessing/پروژه 1- کیفیت هوای یک شهر.md",
@@ -332,7 +338,6 @@
     "overrides/javascripts/mathjax.js",
     "overrides/javascripts",
     "overrides",
-    "Part 3_Data Preprocessing/۱۵ - کارگاه Pipeline.ipynb",
     "img/taxi_fare_residuals.png",
     "img/taxi_fare_regression.png",
     "Excalidraw/Drawing 2026-10-26 09.50.07.excalidraw.md",
@@ -345,18 +350,11 @@
     "Part 1_Data Understanding/جلسه 4.md",
     "Part 1_Data Understanding/جلسه 3.md",
     "Part 1_Data Understanding/جلسه 2.md",
-    "Part 1_Data Understanding/جلسه 1.md",
-    "Part 3_Data Preprocessing/11- داده پرت، نویز و داده تکراری.md",
-    "Part 3_Data Preprocessing/۱۲ - تبدیل و یکپارچه‌سازی داده.md",
     "img/Pasted image 20261016200355.png",
     "img/pca_variance_vs_separation.png",
     "img/Pasted image 20261016164435.png",
     "img/Pasted image 20261016164431.png",
     "img/Pasted image 20261016164140.png",
-    "Part 1_Data Understanding/۳ - انواع داده و ویژگی‌ها.md",
-    "Part 1_Data Understanding/4 - آمار توصیفی.md",
-    "Part 1_Data Understanding/۵ - معیارهای شباهت و فاصله.md",
-    "Part 6_Clustering/30 - جمع‌بندی و ارائه پروژه‌ها.md",
     "img/Pasted image 20261003093511.png"
   ]
 }
