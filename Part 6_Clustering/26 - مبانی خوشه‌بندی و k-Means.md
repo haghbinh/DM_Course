@@ -276,8 +276,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
 # 1. Mall customers: annual income (k$) and spending score (1-100)
-url = "https://raw.githubusercontent.com/tirthajyoti/Machine-Learning-with-Python/master/Datasets/Mall_Customers.csv"
-mall = pd.read_csv(url)
+path = "../data/Mall_Customers.csv"
+mall = pd.read_csv(path)
 X = mall[["Annual Income (k$)", "Spending Score (1-100)"]]
 print(mall.shape)
 print(mall.head(3).to_string(index=False))
@@ -329,8 +329,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
 # 1. Same data; k = 5 inside a pipeline (scaling + k-means)
-url = "https://raw.githubusercontent.com/tirthajyoti/Machine-Learning-with-Python/master/Datasets/Mall_Customers.csv"
-mall = pd.read_csv(url)
+path = "../data/Mall_Customers.csv"
+mall = pd.read_csv(path)
 cols = ["Annual Income (k$)", "Spending Score (1-100)"]
 model = make_pipeline(StandardScaler(), KMeans(n_clusters=5, n_init=10, random_state=42)).fit(mall[cols])
 mall["cluster"] = model[-1].labels_
@@ -383,8 +383,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
 # Same standardized data; 20 single runs with random init vs k-means++ (k = 5)
-url = "https://raw.githubusercontent.com/tirthajyoti/Machine-Learning-with-Python/master/Datasets/Mall_Customers.csv"
-Xs = StandardScaler().fit_transform(pd.read_csv(url)[["Annual Income (k$)", "Spending Score (1-100)"]])
+path = "../data/Mall_Customers.csv"
+Xs = StandardScaler().fit_transform(pd.read_csv(path)[["Annual Income (k$)", "Spending Score (1-100)"]])
 for init in ["random", "k-means++"]:
     sse = np.array([KMeans(5, init=init, n_init=1, random_state=s).fit(Xs).inertia_ for s in range(20)])
     print(f"{init:10s} min={sse.min():.2f}  max={sse.max():.2f}  mean={sse.mean():.2f}  "
@@ -471,8 +471,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score
 
 # Income written in dollars instead of thousand dollars: same information, different scale
-url = "https://raw.githubusercontent.com/tirthajyoti/Machine-Learning-with-Python/master/Datasets/Mall_Customers.csv"
-mall = pd.read_csv(url)
+path = "../data/Mall_Customers.csv"
+mall = pd.read_csv(path)
 X = pd.DataFrame({"income_usd": mall["Annual Income (k$)"] * 1000, "spending": mall["Spending Score (1-100)"]})
 print(X.std().round(1).to_dict())
 

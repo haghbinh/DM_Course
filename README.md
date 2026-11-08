@@ -110,8 +110,8 @@
 | جلسه | عنوان | دانلود PDF |
 |:-:|--:|:-:|
 | ۱۶ | [مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده](Part%204_Regression/16%20-%20%D9%85%D8%A8%D8%A7%D9%86%DB%8C%20%DB%8C%D8%A7%D8%AF%DA%AF%DB%8C%D8%B1%DB%8C%20%D9%86%D8%B8%D8%A7%D8%B1%D8%AA%E2%80%8C%D8%B4%D8%AF%D9%87%20%D9%88%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86%20%D8%AE%D8%B7%DB%8C%20%D8%B3%D8%A7%D8%AF%D9%87.md) | [PDF](https://haghbinh.github.io/DM_Course/pdf/session-16.pdf) |
-| ۱۷ | [رگرسیون خطی چندگانه و ارزیابی](Part%204_Regression/17%20-%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86%20%D8%AE%D8%B7%DB%8C%20%DA%86%D9%86%D8%AF%DA%AF%D8%A7%D9%86%D9%87%20%D9%88%20%D8%A7%D8%B1%D8%B2%DB%8C%D8%A7%D8%A8%DB%8C.md) | [PDF](https://haghbinh.github.io/DM_Course/pdf/session-17.pdf) |
-| ۱۸ | [بیش‌برازش و اعتبارسنجی متقابل](Part%204_Regression/18%20-%20%D8%A8%DB%8C%D8%B4%E2%80%8C%D8%A8%D8%B1%D8%A7%D8%B2%D8%B4%20%D9%88%20%D8%A7%D8%B9%D8%AA%D8%A8%D8%A7%D8%B1%D8%B3%D9%86%D8%AC%DB%8C%20%D9%85%D8%AA%D9%82%D8%A7%D8%A8%D9%84.md) | [PDF](https://haghbinh.github.io/DM_Course/pdf/session-18.pdf) |
+| ۱۷ | [رگرسیون چندگانه، هم‌خطی، رگرسیون غیرخطی و ارزیابی](Part%204_Regression/17%20-%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86%20%DA%86%D9%86%D8%AF%DA%AF%D8%A7%D9%86%D9%87%D8%8C%20%D9%87%D9%85%E2%80%8C%D8%AE%D8%B7%DB%8C%D8%8C%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86%20%D8%BA%DB%8C%D8%B1%D8%AE%D8%B7%DB%8C%20%D9%88%20%D8%A7%D8%B1%D8%B2%DB%8C%D8%A7%D8%A8%DB%8C.md) | [PDF](https://haghbinh.github.io/DM_Course/pdf/session-17.pdf) |
+| ۱۸ | [رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل](Part%204_Regression/18%20-%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86%20%DA%86%D9%86%D8%AF%D8%AC%D9%85%D9%84%D9%87%E2%80%8C%D8%A7%DB%8C%D8%8C%20%D8%A8%DB%8C%D8%B4%E2%80%8C%D8%A8%D8%B1%D8%A7%D8%B2%D8%B4%20%D9%88%20%D8%A7%D8%B9%D8%AA%D8%A8%D8%A7%D8%B1%D8%B3%D9%86%D8%AC%DB%8C%20%D9%85%D8%AA%D9%82%D8%A7%D8%A8%D9%84.md) | [PDF](https://haghbinh.github.io/DM_Course/pdf/session-18.pdf) |
 | ۱۹ | [منظم‌سازی در رگرسیون](Part%204_Regression/19%20-%20%D9%85%D9%86%D8%B8%D9%85%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D8%AF%D8%B1%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86.md) | [PDF](https://haghbinh.github.io/DM_Course/pdf/session-19.pdf) |
 
 <a id="part-5"></a>
@@ -160,5 +160,6 @@ git clone https://github.com/haghbinh/DM_Course.git
 ```
 
 - تصاویر استفاده‌شده در جزوه‌ها در پوشه [img](img) قرار دارند.
+- داده‌های درس (به‌جز داده‌هایی که از کتابخانه‌های پایتون مانند seaborn بارگذاری می‌شوند) در پوشه [data](data) قرار دارند. کدها آن‌ها را با مسیر نسبی `../data/...` می‌خوانند؛ پس جزوه یا دفترچه کارگاه را از داخل پوشه جلسه خودش اجرا کنید.
 
 </div>

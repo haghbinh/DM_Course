@@ -37,7 +37,7 @@ readme = re.sub(r'^<div dir="rtl">\s*$|^</div>\s*$', "", readme, flags=re.M)
 # folder links and notebooks open on GitHub (the site has no folder pages;
 # GitHub renders notebooks)
 GITHUB = "https://github.com/haghbinh/DM_Course"
-readme = re.sub(r"\]\(((?:Part%20|img)[^)#]*?)\)",
+readme = re.sub(r"\]\(((?:Part%20|img|data)[^)#]*?)\)",
                 lambda m: f"]({GITHUB}/{'blob' if m.group(1).endswith('.ipynb') else 'tree'}/main/{m.group(1)})"
                 if not m.group(1).endswith(".md") else m.group(0), readme)
 (DOCS / "index.md").write_text(readme, encoding="utf-8")
