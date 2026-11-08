@@ -39,7 +39,9 @@ from course import (BOOK, COURSE_SUBTITLE, COURSE_TITLE, INSTRUCTOR, SITE_URL,
 ALL_PDF = "all-sessions.pdf"
 COVER_HTML = "_cover.html"
 FONT_FILE = Path(__file__).parent / "fonts" / "Vazirmatn-Regular.woff2"
-MARGIN = {"top": "18mm", "bottom": "16mm", "left": "12mm", "right": "12mm"}
+LOGO_FILE = Path(__file__).parent.parent / "img" / "pgu_logo.png"
+MARGIN = {"top": "22mm", "bottom": "16mm", "left": "12mm", "right": "12mm"}
+COVER_MARGIN = {"top": "14mm", "bottom": "12mm", "left": "12mm", "right": "12mm"}  # no header
 
 READY_JS = """() => {
   const math = [...document.querySelectorAll('.arithmatex')]
@@ -71,6 +73,16 @@ def _font_face():
 
 FONT_FACE, HEADER_FONT = _font_face()
 
+
+def _logo_uri():
+    """University logo as a data URI (header templates can't load files)."""
+    if not LOGO_FILE.exists():
+        return ""
+    return "data:image/png;base64," + base64.b64encode(LOGO_FILE.read_bytes()).decode()
+
+
+LOGO = _logo_uri()
+
 FOOTER_NUMBERS = (
     '<div style="width:100%;font-size:8px;color:#888;text-align:center;'
     'font-family:sans-serif;"><span class="pageNumber"></span> / '
@@ -80,15 +92,17 @@ FOOTER_EMPTY = "<div></div>"  # combined PDF: numbers are stamped after merging
 
 
 def header(chapter, session):
-    """Right: course — instructor | middle: chapter | left: session."""
+    """Right: logo, course — instructor | middle: part | left: session."""
     e = html.escape
     cell = "flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+    logo = (f'<img src="{LOGO}" style="height:30px;width:auto;margin-left:6px;vertical-align:middle">'
+            if LOGO else "")
     return (
         f"{FONT_FACE}"
         f'<div dir="rtl" style="width:100%;margin:0 12mm;padding-bottom:2px;'
-        f"border-bottom:0.5px solid #bbb;display:flex;gap:10px;"
+        f"border-bottom:0.5px solid #bbb;display:flex;align-items:center;gap:10px;"
         f'font-family:{HEADER_FONT};font-size:8px;color:#555;">'
-        f'<span style="{cell}text-align:right">{e(COURSE_TITLE)} — {e(INSTRUCTOR)}</span>'
+        f'<span style="{cell}text-align:right">{logo}{e(COURSE_TITLE)} — {e(INSTRUCTOR)}</span>'
         f'<span style="{cell}text-align:center">{e(chapter)}</span>'
         f'<span style="{cell}text-align:left">{e(session)}</span></div>'
     )
@@ -208,6 +222,20 @@ def print_pdf(page, path, header_html, footer_html):
         print(f"  note: bookmarks removed from {path.name} (heading count mismatch)")
 
 
+def drop_blank_tail(path):
+    """Remove empty trailing pages (no text, no images) that Chromium sometimes
+    adds after a one-page cover; return the number of pages left."""
+    with pikepdf.open(path, allow_overwriting_input=True) as pdf:
+        while len(pdf.pages) > 1:
+            res = pdf.pages[-1].obj.get("/Resources", pikepdf.Dictionary())
+            if "/Font" in res or "/XObject" in res:
+                break
+            del pdf.pages[-1]
+        n = len(pdf.pages)
+        pdf.save(path)
+    return n
+
+
 def _digits_width(text, size):
     """Width of a Helvetica string made of digits, spaces and '/'."""
     widths = {" ": 278, "/": 278}
@@ -257,12 +285,14 @@ def write_cover(site_dir, entries):
     book = f'<p style="margin:0 0 2.4em">{e(BOOK)}</p>' if BOOK else '<div style="height:1.2em"></div>'
     cover = (
         '<div style="text-align:center;padding-top:0">'
-        f'<h1 style="font-size:2.6em;margin:0;color:inherit;font-weight:700">{e(COURSE_TITLE)}</h1>'
+        + (f'<img src="{LOGO}" alt="{e(UNIVERSITY)}" style="height:80px;width:auto;margin:0 auto .3em;'
+           'display:block;box-shadow:none">' if LOGO else "") +
+        f'<h1 style="font-size:2.2em;margin:0;color:inherit;font-weight:700">{e(COURSE_TITLE)}</h1>'
         f'<p style="font-size:1.5em;margin:.3em 0 1em">{e(COURSE_SUBTITLE)}</p>'
         f'<p style="font-size:1.25em;margin:0">مدرس: <strong>{e(INSTRUCTOR)}</strong></p>'
-        f'<p style="font-size:1.1em;margin:.3em 0 1.6em">{e(UNIVERSITY)}</p>'
+        f'<p style="font-size:1.1em;margin:.2em 0 1em">{e(UNIVERSITY)}</p>'
         f'{book}'
-        '<table style="margin:0 auto;border-collapse:collapse;font-size:.8em;'
+        '<table style="margin:0 auto;border-collapse:collapse;font-size:.78em;'
         f'display:table;width:auto;border:none;box-shadow:none">{rows}</table>'
         f'<p style="margin-top:1em;color:#888;font-size:.85em">{e(SITE_URL)}</p>'
         "</div>"
@@ -380,11 +410,11 @@ def main():
                 cover_html = write_cover(site_dir, entries)
                 prepare(page, base + quote(COVER_HTML))
                 page.pdf(path=str(cover_pdf), format="A4", print_background=True,
-                         margin=MARGIN, tagged=True)
-                with pikepdf.open(cover_pdf) as pdf:
-                    if len(pdf.pages) == n_cover:
-                        break
-                    n_cover = len(pdf.pages)
+                         margin=COVER_MARGIN, tagged=True)
+                n_pages = drop_blank_tail(cover_pdf)
+                if n_pages == n_cover:
+                    break
+                n_cover = n_pages
             browser.close()
 
         merge(cover_pdf, [(session, part) for session, _, _, part in parts],
