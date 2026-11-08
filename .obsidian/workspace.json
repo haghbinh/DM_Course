@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Part 6_Clustering/28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل.md",
-                "mode": "source",
+                "file": "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل"
+              "title": "17 - رگرسیون خطی چندگانه و ارزیابی"
             }
           }
         ],
@@ -309,6 +309,12 @@
   },
   "active": "efb3529f50982590",
   "lastOpenFiles": [
+    "img/pgu_logo.png",
+    "img/images/pgu_logo.png",
+    "img/images",
+    "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
+    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
+    "Part 6_Clustering/28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل.md",
     "Claude outputs/mkdocs-1.yml",
     "Claude outputs",
     "web/prepare_docs.py",
@@ -319,8 +325,6 @@
     "web/fonts",
     "web/requirements.txt",
     "web/mathjax.js",
-    "web/make_pdfs.py",
-    "web/hooks.py",
     "img/titanic_final_roc.png",
     "img/mall_pca_clusters.png",
     "img/mall_profile_heatmap.png",
@@ -330,9 +334,6 @@
     "img/dbscan_kdist_moons.png",
     "img/hc_linkage_comparison.png",
     "img/mall_ward_dendrogram.png",
-    "img/hc_toy_dendrograms.png",
-    "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
-    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
     "Part 5_Classification/25 - ارزیابی مدل‌های طبقه‌بندی.md",
     "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
     "Part 5_Classification/23 - روش‌های گروهی.md",
@@ -354,7 +355,6 @@
     "Part 3_Data Preprocessing/۱۰ - مدیریت داده گمشده.md",
     "Part 3_Data Preprocessing/۱۳ - مهندسی و انتخاب ویژگی.md",
     "Part 1_Data Understanding/جلسه 4.md",
-    "Part 1_Data Understanding/جلسه 3.md",
-    "Part 1_Data Understanding/جلسه 2.md"
+    "Part 1_Data Understanding/جلسه 3.md"
   ]
 }
