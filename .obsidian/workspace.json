@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
+                "file": "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "18 - بیش‌برازش و اعتبارسنجی متقابل"
+              "title": "19 - منظم‌سازی در رگرسیون"
             }
           }
         ],
@@ -309,13 +309,13 @@
   },
   "active": "efb3529f50982590",
   "lastOpenFiles": [
+    "Part 4_Regression/18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.md",
+    "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
     "Claude outputs/mkdocs-1.yml",
     "Claude outputs",
-    "Part 4_Regression/18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.md",
     "Part 4_Regression/17 - رگرسیون چندگانه، هم‌خطی، رگرسیون غیرخطی و ارزیابی.md",
     "Part 4_Regression/18 - کارگاه رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.ipynb",
     "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
-    "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
     "data/sms.tsv",
     "data/online-retail-dataset.csv.gz",
     "data/housing.csv",
