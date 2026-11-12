@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
-                "mode": "preview",
+                "file": "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "19 - منظم‌سازی در رگرسیون"
+              "title": "20 -  مبانی طبقه‌بندی و k-NN"
             }
           }
         ],
@@ -81,7 +81,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "bbe8e4798675a2d2",
@@ -309,13 +310,26 @@
   },
   "active": "efb3529f50982590",
   "lastOpenFiles": [
+    "img/students_knn.png",
+    "Part 5_Classification/25 - ارزیابی مدل‌های طبقه‌بندی.md",
+    "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
+    "img/students_rule1.png",
+    "img/students_rule2.png",
+    "img/titanic_tree_pruning.png",
+    "img/titanic_tree_depth3.png",
+    "img/titanic_roc_pr.png",
+    "img/titanic_rf_importance.png",
+    "img/sine_learning_curve.png",
+    "img/students_decision_boundary.png",
+    "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
     "Part 4_Regression/18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.md",
     "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
+    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
+    "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
     "Claude outputs/mkdocs-1.yml",
     "Claude outputs",
     "Part 4_Regression/17 - رگرسیون چندگانه، هم‌خطی، رگرسیون غیرخطی و ارزیابی.md",
     "Part 4_Regression/18 - کارگاه رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.ipynb",
-    "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
     "data/sms.tsv",
     "data/online-retail-dataset.csv.gz",
     "data/housing.csv",
@@ -327,21 +341,9 @@
     "img/images/pgu_logo.png",
     "img/images",
     "Part 6_Clustering/28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل.md",
-    "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
-    "img/titanic_final_roc.png",
-    "img/mall_pca_clusters.png",
-    "img/mall_profile_heatmap.png",
-    "img/mall_silhouette_plot.png",
-    "img/gmm_bic_elongated.png",
-    "img/mall_dbscan.png",
-    "img/dbscan_kdist_moons.png",
-    "img/hc_linkage_comparison.png",
-    "Part 5_Classification/25 - ارزیابی مدل‌های طبقه‌بندی.md",
-    "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
     "Part 5_Classification/23 - روش‌های گروهی.md",
     "Part 5_Classification/22 - درخت تصمیم.md",
     "Part 5_Classification/21 - بیز ساده و رگرسیون لجستیک.md",
-    "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
     "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md",
     "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md",
     "Part 2_EDA/9 - مطالعه موردی EDA.md",
