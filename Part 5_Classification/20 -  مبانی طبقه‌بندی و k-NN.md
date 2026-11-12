@@ -10,7 +10,7 @@
 
 - مسئله طبقه‌بندی و **مرز تصمیم** چیست؟
 - ساده‌ترین طبقه‌بند، یعنی **k-نزدیک‌ترین همسایه**، چگونه کار می‌کند و k را چگونه انتخاب کنیم؟
-- چرا **مقیاس‌بندی** برای k-NN حیاتی است و این روش کجا ضعیف عمل می‌کند؟
+- چرا **مقیاس‌بندی** برای k-NN حیاتی است و k را با کدام داده انتخاب کنیم؟
 
 ---
 
@@ -238,7 +238,7 @@ $$
 > [!note] بررسی
 > پیش‌بینی با تغییر k **عوض می‌شود** (قبول، مردود، قبول)؛ پس انتخاب k بخش مهمی از ساخت مدل است و آن را در بخش «انتخاب k» با اعتبارسنجی متقابل انجام می‌دهیم، نه با داده آزمون. در مسئله دودویی k را **فرد** بگیرید تا رأی مساوی پیش نیاید. قاعده ۱ و قاعده ۲ هر دو این دانشجو را «قبول» پیش‌بینی می‌کنند (ساعت مطالعه ۸ و مجموع ۸ + ۴ = ۱۲)؛ k-NN با k برابر ۳ به دو همسایه مردود نزدیک او توجه می‌کند.
 
-کلاس `KNeighborsClassifier` همین اعداد را می‌دهد:
+کلاس `KNeighborsClassifier` همین اعداد را می‌دهد. کدهای این جلسه مانند سلول‌های یک نوت‌بوک **پشت سر هم** اجرا می‌شوند: هر کد از داده و متغیرهای کدهای قبلی استفاده می‌کند و فقط کتابخانه‌های تازه را `import` می‌کند.
 
 ```python
 import pandas as pd
@@ -252,7 +252,7 @@ train = pd.DataFrame({"hours":      [2, 3, 4, 5, 5, 6, 7, 8, 9, 10],
 X, y = train[["hours", "attendance"]], train["result"]
 new = pd.DataFrame({"hours": [8], "attendance": [8]})
 
-# 2. Simple majority vote for k = 1, 3, 5 (classes are sorted: fail, pass)
+# 2. Simple majority vote for k = 1, 3, 5 (probability columns are in the order fail, pass)
 for k in [1, 3, 5]:
     knn = KNeighborsClassifier(n_neighbors=k).fit(X, y)
     print(f"k={k}  prediction={knn.predict(new)[0]}  P(pass)={knn.predict_proba(new)[0, 1]:.3f}")
@@ -261,9 +261,9 @@ for k in [1, 3, 5]:
 knn_w = KNeighborsClassifier(n_neighbors=3, weights="distance").fit(X, y)
 print(f"weighted k=3  prediction={knn_w.predict(new)[0]}  P(pass)={knn_w.predict_proba(new)[0, 1]:.3f}")
 
-# 4. Distances and numbers of the 5 nearest students (index 0 = student 1)
-dist, idx = knn.kneighbors(new, n_neighbors=5)
-print(f"neighbours={idx[0] + 1}  distances={dist[0].round(3)}")
+# 4. The 5 nearest students and their distances (the last model above has k = 5)
+dist, idx = knn.kneighbors(new)
+print(f"students={idx[0] + 1}  distances={dist[0].round(3)}")
 ```
 
 ```
@@ -271,7 +271,7 @@ k=1  prediction=pass  P(pass)=1.000
 k=3  prediction=fail  P(pass)=0.333
 k=5  prediction=pass  P(pass)=0.600
 weighted k=3  prediction=fail  P(pass)=0.423
-neighbours=[7 4 6 8 9]  distances=[2.236 3.    3.606 5.    5.099]
+students=[7 4 6 8 9]  distances=[2.236 3.    3.606 5.    5.099]
 ```
 
 ### بیش از دو کلاس
@@ -279,38 +279,33 @@ neighbours=[7 4 6 8 9]  distances=[2.236 3.    3.606 5.    5.099]
 رأی‌گیری k-NN بدون هیچ تغییری برای مسئله **چندکلاسه** هم کار می‌کند: کلاسی که بیشترین رأی را میان k همسایه دارد برنده است و `predict_proba` برای هر کلاس یک ستون دارد. داده **گل زنبق** (Iris) ۱۵۰ گل از سه گونه ستوسا (setosa)، ورسیکالر (versicolor) و ویرجینیکا (virginica) دارد، از هر گونه ۵۰ گل. با دو ویژگی **طول و عرض گلبرگ** (هر دو بر حسب سانتی‌متر و با بازه نزدیک)، گونه گلی تازه با طول گلبرگ ۵ و عرض ۱.۴ را با k برابر ۵ پیش‌بینی می‌کنیم:
 
 ```python
-import pandas as pd
 from sklearn.datasets import load_iris
-from sklearn.neighbors import KNeighborsClassifier
 
-# 1. Iris: 150 flowers, three species; two features (petal length and width, in cm)
+# 1. Iris: 150 flowers of three species; two features, petal length and width (cm)
 iris = load_iris(as_frame=True)
-X = iris.data[["petal length (cm)", "petal width (cm)"]]
-y = iris.target_names[iris.target]            # species names instead of 0, 1, 2
-print(pd.Series(y).value_counts().to_dict())
+X_iris = iris.data[["petal length (cm)", "petal width (cm)"]]
+y_iris = iris.target_names[iris.target]            # species names instead of 0, 1, 2
 
-# 2. A new flower near the border of versicolor and virginica
-new = pd.DataFrame({"petal length (cm)": [5.0], "petal width (cm)": [1.4]})
-knn = KNeighborsClassifier(n_neighbors=5).fit(X, y)
-print(f"classes={knn.classes_.tolist()}")
-print(f"prediction={knn.predict(new)[0]}  probabilities={knn.predict_proba(new)[0].round(2).tolist()}")
+# 2. A new flower near the border of versicolor and virginica, with k = 5
+flower = pd.DataFrame({"petal length (cm)": [5.0], "petal width (cm)": [1.4]})
+knn_iris = KNeighborsClassifier(n_neighbors=5).fit(X_iris, y_iris)
+print(f"classes={knn_iris.classes_.tolist()}")
+print(f"prediction={knn_iris.predict(flower)[0]}  probabilities={knn_iris.predict_proba(flower)[0].round(2).tolist()}")
 
-# 3. The 5 nearest flowers: their features, species and distance
-dist, idx = knn.kneighbors(new)
-neighbours = X.iloc[idx[0]].assign(species=y[idx[0]], distance=dist[0].round(3))
-print(neighbours)
+# 3. The 5 nearest flowers: their species and distance
+dist, idx = knn_iris.kneighbors(flower)
+print(pd.DataFrame({"species": y_iris[idx[0]], "distance": dist[0].round(3)}))
 ```
 
 ```
-{'setosa': 50, 'versicolor': 50, 'virginica': 50}
 classes=['setosa', 'versicolor', 'virginica']
 prediction=versicolor  probabilities=[0.0, 0.6, 0.4]
-     petal length (cm)  petal width (cm)     species  distance
-119                5.0               1.5   virginica     0.100
-133                5.1               1.5   virginica     0.141
-52                 4.9               1.5  versicolor     0.141
-72                 4.9               1.5  versicolor     0.141
-76                 4.8               1.4  versicolor     0.200
+      species  distance
+0   virginica     0.100
+1   virginica     0.141
+2  versicolor     0.141
+3  versicolor     0.141
+4  versicolor     0.200
 ```
 
 از پنج همسایه، سه همسایه ورسیکالر و دو همسایه ویرجینیکا هستند و هیچ ستوسایی میان آن‌ها نیست؛ پس پیش‌بینی **ورسیکالر** با احتمال ۰.۶ است و احتمال ستوسا صفر است. دو نکته:
@@ -375,33 +370,27 @@ $$
 > پس از Min-Max، نوشتن زمان مطالعه به ساعت یا دقیقه **همان** اعداد صفر تا یک را می‌دهد؛ یعنی مقیاس‌بندی، پیش‌بینی را از واحد اندازه‌گیری مستقل می‌کند. کمینه و بیشینه فقط از داده آموزش یاد گرفته می‌شوند و روی دانشجوی تازه (و داده آزمون) فقط **اعمال** می‌شوند. روش مقیاس‌بندی هم خودش یک انتخاب است: اگر در همین مثال به جای Min-Max از استانداردسازی استفاده کنیم، همسایه سوم دانشجوی ۸ می‌شود و پیش‌بینی 3-NN «قبول» است.
 
 ```python
-import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.neighbors import KNeighborsClassifier
 
-# 1. The ten training students, with study time in minutes per week instead of hours
-train = pd.DataFrame({"minutes":    [120, 180, 240, 300, 300, 360, 420, 480, 540, 600],
-                      "attendance": [6, 12, 15, 8, 14, 5, 10, 13, 3, 15],
-                      "result": ["fail", "fail", "pass", "fail", "pass",
-                                 "fail", "pass", "pass", "pass", "pass"]})
-X, y = train[["minutes", "attendance"]], train["result"]
-new = pd.DataFrame({"minutes": [480], "attendance": [8]})    # the same new student (8 hours)
+# 1. Continues the student code: study time in minutes per week instead of hours
+X_min = pd.DataFrame({"minutes": X["hours"] * 60, "attendance": X["attendance"]})
+new_min = pd.DataFrame({"minutes": [480], "attendance": [8]})
 
 # 2. Without scaling: minutes dominate the distance
-knn = KNeighborsClassifier(n_neighbors=3).fit(X, y)
-dist, idx = knn.kneighbors(new)
-print(f"raw:    neighbours={idx[0] + 1}  distances={dist[0].round(3)}  prediction={knn.predict(new)[0]}")
+knn = KNeighborsClassifier(n_neighbors=3).fit(X_min, y)
+dist, idx = knn.kneighbors(new_min)
+print(f"raw:     students={idx[0] + 1}  distances={dist[0].round(3)}  prediction={knn.predict(new_min)[0]}")
 
-# 3. Min-Max scaling learned from the training students only
-scaler = MinMaxScaler().fit(X)
-knn_s = KNeighborsClassifier(n_neighbors=3).fit(scaler.transform(X), y)
-dist, idx = knn_s.kneighbors(scaler.transform(new))
-print(f"scaled: neighbours={idx[0] + 1}  distances={dist[0].round(3)}  prediction={knn_s.predict(scaler.transform(new))[0]}")
+# 3. Min-Max scaling learned from the training students only, then the same 3-NN
+scaler = MinMaxScaler().fit(X_min)
+knn = KNeighborsClassifier(n_neighbors=3).fit(scaler.transform(X_min), y)
+dist, idx = knn.kneighbors(scaler.transform(new_min))
+print(f"Min-Max: students={idx[0] + 1}  distances={dist[0].round(3)}  prediction={knn.predict(scaler.transform(new_min))[0]}")
 ```
 
 ```
-raw:    neighbours=[8 7 9]  distances=[ 5.    60.033 60.208]  prediction=pass
-scaled: neighbours=[7 6 4]  distances=[0.208 0.354 0.375]  prediction=fail
+raw:     students=[8 7 9]  distances=[ 5.    60.033 60.208]  prediction=pass
+Min-Max: students=[7 6 4]  distances=[0.208 0.354 0.375]  prediction=fail
 ```
 
 ### داده واقعی: تایتانیک
@@ -412,100 +401,79 @@ scaled: neighbours=[7 6 4]  distances=[0.208 0.354 0.375]  prediction=fail
 - ویژگی‌های عددی: سن، کرایه، تعداد همسر و خواهر و برادر، تعداد والدین و فرزندان، کلاس سفر؛ ویژگی‌های کیفی: جنسیت و بندر سوار شدن.
 - تقسیم **طبقه‌بندی‌شده** با ۲۰ درصد آزمون و `random_state=42` ← [طراحی آزمایش و Pipeline](../Part%203_Data%20Preprocessing/%DB%B1%DB%B5%20-%20%D8%B7%D8%B1%D8%A7%D8%AD%DB%8C%20%D8%A2%D8%B2%D9%85%D8%A7%DB%8C%D8%B4%20%D9%88%20Pipeline.md)
 - پیش‌پردازش داخل Pipeline: جایگذاری میانه و استانداردسازی برای ستون‌های عددی، جایگذاری مد و One-Hot برای ستون‌های کیفی. همه این گام‌ها **یادگیرنده**‌اند و فقط روی داده آموزش `fit` می‌شوند.
-- اعتبارسنجی متقابل **طبقه‌بندی‌شده** پنج بخشی (`StratifiedKFold`) تا نسبت زنده‌ماندگان در هر بخش حفظ شود.
+
+برای مقایسه مدل با و بدون مقیاس‌بندی، ساده‌ترین روش اعتبارسنجی یعنی **کنارگذاری** (Hold-out) را به کار می‌بریم: ۲۵ درصد داده آموزش را کنار می‌گذاریم (**داده اعتبارسنجی**)، مدل را روی بقیه آن `fit` می‌کنیم و صحت را روی داده اعتبارسنجی می‌سنجیم. داده آزمون در این مقایسه دست نمی‌خورد.
 
 ```python
 import seaborn as sns
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import make_pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.dummy import DummyClassifier
 
-# 1. Titanic: predict survival; the test set is locked (stratified split)
+# 1. Titanic: lock the test set (20%), then hold out 25% of the training set for validation
 titanic = sns.load_dataset("titanic")
 num = ["age", "fare", "sibsp", "parch", "pclass"]
 cat = ["sex", "embarked"]
-X_train, X_test, y_train, y_test = train_test_split(titanic[num + cat], titanic["survived"],
-                                                    test_size=0.2, stratify=titanic["survived"],
-                                                    random_state=42)
-print(f"train={len(X_train)}  test={len(X_test)}  survival rate={y_train.mean():.3f}")
+X, y = titanic[num + cat], titanic["survived"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+X_fit, X_val, y_fit, y_val = train_test_split(X_train, y_train, test_size=0.25,
+                                              stratify=y_train, random_state=42)
+print(f"fit={len(X_fit)}  validation={len(X_val)}  test={len(X_test)} (locked)")
 
-# 2. Preprocessing with or without standardization of the numeric columns
-def preprocess(scale):
-    num_steps = [SimpleImputer(strategy="median")] + ([StandardScaler()] if scale else [])
-    return ColumnTransformer([
-        ("num", make_pipeline(*num_steps), num),
-        ("cat", make_pipeline(SimpleImputer(strategy="most_frequent"),
-                              OneHotEncoder(handle_unknown="ignore")), cat)])
+# 2. Two preprocessing pipelines: numeric columns imputed, and standardized only in the second
+categorical = make_pipeline(SimpleImputer(strategy="most_frequent"), OneHotEncoder(handle_unknown="ignore"))
+preprocess_raw = ColumnTransformer([("num", SimpleImputer(strategy="median"), num),
+                                    ("cat", categorical, cat)])
+preprocess = ColumnTransformer([("num", make_pipeline(SimpleImputer(strategy="median"), StandardScaler()), num),
+                                ("cat", categorical, cat)])
 
-# 3. Stratified 5-fold CV accuracy: baseline, k-NN without and with scaling
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+# 3. Fit on the fit part, measure accuracy on the validation part
 models = {"Baseline (majority class)": DummyClassifier(strategy="most_frequent"),
-          "5-NN, no scaling": make_pipeline(preprocess(False), KNeighborsClassifier(5)),
-          "5-NN, standardized": make_pipeline(preprocess(True), KNeighborsClassifier(5))}
+          "5-NN, no scaling": make_pipeline(preprocess_raw, KNeighborsClassifier(n_neighbors=5)),
+          "5-NN, standardized": make_pipeline(preprocess, KNeighborsClassifier(n_neighbors=5))}
 for name, model in models.items():
-    acc = cross_val_score(model, X_train, y_train, cv=cv, scoring="accuracy")
-    print(f"{name:26s} CV accuracy={acc.mean():.3f}")
+    model.fit(X_fit, y_fit)
+    print(f"{name:26s} validation accuracy={model.score(X_val, y_val):.3f}")
 ```
 
 ```
-train=712  test=179  survival rate=0.383
-Baseline (majority class)  CV accuracy=0.617
-5-NN, no scaling           CV accuracy=0.706
-5-NN, standardized         CV accuracy=0.798
+fit=534  validation=178  test=179 (locked)
+Baseline (majority class)  validation accuracy=0.618
+5-NN, no scaling           validation accuracy=0.708
+5-NN, standardized         validation accuracy=0.837
 ```
 
-مدل پایه صحت اعتبارسنجی ۰.۶۱۷ دارد (نسبت جان‌باختگان). بدون مقیاس‌بندی، کرایه (تا ۵۱۲ پوند) بر فاصله مسلط است و صحت اعتبارسنجی فقط ۰.۷۰۶ است؛ با استانداردسازی به ۰.۷۹۸ می‌رسد: حدود **۹ واحد درصد** بهبود فقط با یک گام پیش‌پردازش.
+مدل پایه صحت اعتبارسنجی ۰.۶۱۸ دارد (نسبت جان‌باختگان). بدون مقیاس‌بندی، کرایه (تا ۵۱۲ پوند) بر فاصله مسلط است و صحت اعتبارسنجی فقط ۰.۷۰۸ است؛ با استانداردسازی به ۰.۸۳۷ می‌رسد: حدود **۱۳ واحد درصد** بهبود فقط با یک گام پیش‌پردازش. چون Pipeline شامل جایگذاری، استانداردسازی و One-Hot است، میانه، میانگین و انحراف معیار فقط از بخش `fit` یاد گرفته می‌شوند و داده اعتبارسنجی در آن‌ها نقشی ندارد.
+
+> [!note] بررسی
+> داده اعتبارسنجی فقط ۱۷۸ مسافر است و هر مسافر حدود ۰.۶ واحد درصد صحت است؛ پس عدد آن به این بستگی دارد که کدام مسافران در آن افتاده‌اند. تفاوت ۱۳ واحد درصدی مقیاس‌بندی از این نوسان بسیار بزرگ‌تر است، اما برای تفاوت‌های کوچک (مانند بخش بعد) باید محتاط بود.
 
 ### معیار فاصله
 
-ویژگی‌های کیفی ابتدا One-Hot می‌شوند ← [تبدیل و یکپارچه‌سازی داده](../Part%203_Data%20Preprocessing/%DB%B1%DB%B2%20-%20%D8%AA%D8%A8%D8%AF%DB%8C%D9%84%20%D9%88%20%DB%8C%DA%A9%D9%BE%D8%A7%D8%B1%DA%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D8%AF%D8%A7%D8%AF%D9%87.md). معیار فاصله را متناسب با داده انتخاب کنید: اقلیدسی (پیش‌فرض، `p=2`) برای ویژگی‌های عددی هم‌مقیاس، منهتن (`p=1`) با حساسیت کمتر به اختلاف بزرگ در یک ویژگی، کسینوسی برای متن و همینگ برای ویژگی‌های دودویی. معیار فاصله هم مانند k یک ابرپارامتر است و با اعتبارسنجی متقابل انتخاب می‌شود:
+ویژگی‌های کیفی ابتدا One-Hot می‌شوند ← [تبدیل و یکپارچه‌سازی داده](../Part%203_Data%20Preprocessing/%DB%B1%DB%B2%20-%20%D8%AA%D8%A8%D8%AF%DB%8C%D9%84%20%D9%88%20%DB%8C%DA%A9%D9%BE%D8%A7%D8%B1%DA%86%D9%87%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D8%AF%D8%A7%D8%AF%D9%87.md). معیار فاصله را متناسب با داده انتخاب کنید: اقلیدسی (پیش‌فرض، `p=2`) برای ویژگی‌های عددی هم‌مقیاس، منهتن (`p=1`) با حساسیت کمتر به اختلاف بزرگ در یک ویژگی، کسینوسی برای متن و همینگ برای ویژگی‌های دودویی. معیار فاصله هم مانند k یک **ابرپارامتر** است. در ادامه همان کد تایتانیک، با همان تقسیم و همان Pipeline استانداردشده، فقط پارامتر `p` را عوض می‌کنیم و صحت اعتبارسنجی منهتن و اقلیدسی را برای چند k مقایسه می‌کنیم:
 
 ```python
-import pandas as pd
-import seaborn as sns
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import make_pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.neighbors import KNeighborsClassifier
-
-# 1. Same Titanic data, split and preprocessing (with standardization)
-titanic = sns.load_dataset("titanic")
-num = ["age", "fare", "sibsp", "parch", "pclass"]
-cat = ["sex", "embarked"]
-X_train, X_test, y_train, y_test = train_test_split(titanic[num + cat], titanic["survived"],
-                                                    test_size=0.2, stratify=titanic["survived"],
-                                                    random_state=42)
-preprocess = ColumnTransformer([
-    ("num", make_pipeline(SimpleImputer(strategy="median"), StandardScaler()), num),
-    ("cat", make_pipeline(SimpleImputer(strategy="most_frequent"),
-                          OneHotEncoder(handle_unknown="ignore")), cat)])
-
-# 2. Manhattan (p=1) vs Euclidean (p=2) distance for a few k, stratified 5-fold CV accuracy
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-rows = []
+# Continues the previous code: same fit/validation split and the standardized preprocessing
 for k in [5, 17, 31]:
     for p, name in [(1, "Manhattan"), (2, "Euclidean")]:
         model = make_pipeline(preprocess, KNeighborsClassifier(n_neighbors=k, p=p))
-        rows.append({"k": k, "distance": name,
-                     "CV accuracy": cross_val_score(model, X_train, y_train, cv=cv).mean()})
-print(pd.DataFrame(rows).pivot(index="k", columns="distance", values="CV accuracy").round(3))
+        model.fit(X_fit, y_fit)
+        print(f"k={k:2d}  {name:9s}  validation accuracy={model.score(X_val, y_val):.3f}")
 ```
 
 ```
-distance  Euclidean  Manhattan
-k                             
-5             0.798      0.810
-17            0.826      0.820
-31            0.813      0.805
+k= 5  Manhattan  validation accuracy=0.826
+k= 5  Euclidean  validation accuracy=0.837
+k=17  Manhattan  validation accuracy=0.843
+k=17  Euclidean  validation accuracy=0.831
+k=31  Manhattan  validation accuracy=0.803
+k=31  Euclidean  validation accuracy=0.826
 ```
 
-تفاوت دو معیار روی تایتانیک حداکثر ۱.۲ واحد درصد است و برنده با k عوض می‌شود: با ۵ همسایه منهتن و با ۱۷ و ۳۱ همسایه اقلیدسی کمی بهتر است. در این داده انتخاب k مهم‌تر از معیار فاصله است.
+تفاوت دو معیار حداکثر ۲.۳ واحد درصد، یعنی حدود چهار مسافر از ۱۷۸ مسافر اعتبارسنجی، است و برنده با k عوض می‌شود: با ۵ و ۳۱ همسایه اقلیدسی و با ۱۷ همسایه منهتن کمی بهتر است. چنین تفاوت کوچکی روی یک داده اعتبارسنجی کوچک قابل اعتماد نیست؛ برای انتخاب مطمئن ابرپارامترها در بخش بعد از **اعتبارسنجی متقابل** استفاده می‌کنیم. در این داده معیار فاصله اثر چندانی ندارد و همان اقلیدسی پیش‌فرض را نگه می‌داریم.
 
 ---
 
@@ -513,156 +481,104 @@ k
 
 | مقدار k | مرز تصمیم | پیچیدگی مرز | حساسیت به داده آموزش | خطر |
 |:---:|:---:|:---:|:---:|:---:|
-| برابر ۱ | بسیار نامنظم، جزیره‌های کوچک دور نقاط پرت | کم | زیاد | بیش‌برازش؛ صحت آموزش تقریباً ۱۰۰ درصد |
+| برابر ۱ | بسیار نامنظم، جزیره‌های کوچک دور نقاط پرت | زیاد | زیاد | بیش‌برازش؛ صحت آموزش تقریباً ۱۰۰ درصد |
 | متوسط | هموارتر | متوسط | متوسط | — |
-| بسیار بزرگ (نزدیک n) | تقریباً ثابت: همیشه کلاس اکثریت | زیاد | کم | کم‌برازش |
+| بسیار بزرگ (نزدیک n) | تقریباً ثابت: همیشه کلاس اکثریت | کم | کم | کم‌برازش |
 
-پیچیدگی k-NN با افزایش k **کم** می‌شود؛ برعکس درجه چندجمله‌ای. کد زیر مرز تصمیم را روی یک داده شبیه‌سازی‌شده دوبعدی (دو نیم‌ماه درهم با نویز) برای سه مقدار k رسم می‌کند و صحت آموزش را کنار صحت اعتبارسنجی متقابل پنج بخشی می‌گذارد؛ داده آزمونی در کار نیست، چون این مقایسه برای **انتخاب** k است:
+پیچیدگی k-NN با افزایش k **کم** می‌شود؛ برعکس درجه چندجمله‌ای. کد زیر روی یک داده شبیه‌سازی‌شده دوبعدی (۶۰۰ نقطه در دو نیم‌ماه درهم با نویز) همان روش کنارگذاری بخش تایتانیک را به کار می‌برد: ۳۰ درصد نقاط برای اعتبارسنجی کنار گذاشته می‌شوند، مدل برای سه مقدار k روی بقیه `fit` می‌شود و صحت آموزش کنار صحت اعتبارسنجی قرار می‌گیرد. داده آزمونی در کار نیست، چون این مقایسه برای **انتخاب** k است:
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_moons
-from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.neighbors import KNeighborsClassifier
 
-# 1. Two interleaving half-moons with noise (a simulated two-class problem)
-X, y = make_moons(n_samples=300, noise=0.3, random_state=42)
+# 1. Two interleaving half-moons with noise; 30% of the points held out for validation
+X_moons, y_moons = make_moons(n_samples=600, noise=0.3, random_state=42)
+Xm_fit, Xm_val, ym_fit, ym_val = train_test_split(X_moons, y_moons, test_size=0.3,
+                                                  stratify=y_moons, random_state=42)
 
 # 2. A grid covering the plane, to colour each region by its predicted class
 xx, yy = np.meshgrid(np.linspace(-2, 3, 300), np.linspace(-1.5, 2, 300))
 grid = np.c_[xx.ravel(), yy.ravel()]
 
-# 3. For each k: training accuracy and stratified 5-fold CV accuracy, then the boundary
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+# 3. For each k: training and validation accuracy, then the boundary
+#    (circles = fit points, squares = validation points)
 fig, axes = plt.subplots(1, 3, figsize=(15, 4.2), sharey=True)
-for ax, k in zip(axes, [1, 15, 150]):
-    knn = KNeighborsClassifier(n_neighbors=k)
-    cv_acc = cross_val_score(knn, X, y, cv=cv).mean()
-    knn.fit(X, y)
-    print(f"k={k:3d}  training accuracy={knn.score(X, y):.3f}  CV accuracy={cv_acc:.3f}")
+for ax, k in zip(axes, [1, 15, 300]):
+    knn = KNeighborsClassifier(n_neighbors=k).fit(Xm_fit, ym_fit)
+    print(f"k={k:3d}  training accuracy={knn.score(Xm_fit, ym_fit):.3f}  "
+          f"validation accuracy={knn.score(Xm_val, ym_val):.3f}")
     ax.contourf(xx, yy, knn.predict(grid).reshape(xx.shape), alpha=0.3, cmap="coolwarm")
-    ax.scatter(X[:, 0], X[:, 1], c=y, cmap="coolwarm", edgecolor="k", s=20)
+    ax.scatter(Xm_fit[:, 0], Xm_fit[:, 1], c=ym_fit, cmap="coolwarm", edgecolor="k", s=12)
+    ax.scatter(Xm_val[:, 0], Xm_val[:, 1], c=ym_val, cmap="coolwarm", edgecolor="k", s=18, marker="s")
     ax.set(title=f"k = {k}", xlabel="x1")
 axes[0].set_ylabel("x2")
 plt.show()
 ```
 
 ```
-k=  1  training accuracy=1.000  CV accuracy=0.863
-k= 15  training accuracy=0.903  CV accuracy=0.890
-k=150  training accuracy=0.837  CV accuracy=0.807
+k=  1  training accuracy=1.000  validation accuracy=0.872
+k= 15  training accuracy=0.924  validation accuracy=0.894
+k=300  training accuracy=0.757  validation accuracy=0.772
 ```
 
 ![moons knn boundaries](../img/moons_knn_boundaries.png)
 
-با k برابر ۱ صحت آموزش ۱۰۰ درصد است (هر نقطه نزدیک‌ترین همسایه خودش است) و مرز دور نقاط پرت جزیره می‌سازد؛ صحت اعتبارسنجی فقط ۰.۸۶۳ است. با k برابر ۱۵ مرز هموار و صحت اعتبارسنجی بهترین است (۰.۸۹۰). با k برابر ۱۵۰ (نیمی از داده) مرز تقریباً خط راست است و هر دو صحت افت می‌کنند (کم‌برازش).
+با k برابر ۱ صحت آموزش ۱۰۰ درصد است (هر نقطه نزدیک‌ترین همسایه خودش است) و مرز دور نقاط پرت جزیره می‌سازد؛ صحت اعتبارسنجی فقط ۰.۸۷۲ است (بیش‌برازش). با k برابر ۱۵ مرز هموار و صحت اعتبارسنجی بهترین است (۰.۸۹۴). با k برابر ۳۰۰ (بیش از نیمی از ۴۲۰ نقطه `fit`) مرز تقریباً خط راست است و هر دو صحت افت می‌کنند (کم‌برازش). فاصله صحت آموزش و اعتبارسنجی با k کوچک زیاد است و با بزرگ شدن k از بین می‌رود.
 
-روی تایتانیک، k و نوع رأی را با **جست‌وجوی شبکه‌ای** (`GridSearchCV`) و اعتبارسنجی متقابل انتخاب می‌کنیم. این کلاس همه ترکیب‌ها را می‌آزماید، بهترین را برمی‌گزیند و آن را روی کل داده آموزش دوباره آموزش می‌دهد:
+### چرا اعتبارسنجی متقابل؟
+
+آیا روی تایتانیک هم می‌توان k را با روش کنارگذاری انتخاب کرد؟ بله، اما نتیجه به این بستگی دارد که کدام مسافران در داده اعتبارسنجی بیفتند. اگر kهای فرد ۱ تا ۱۰۱ را با همان Pipeline روی پنج تقسیم متفاوت آموزش (فقط با `random_state` متفاوت) بیازماییم:
+
+| تقسیم اعتبارسنجی | بهترین k | صحت اعتبارسنجی |
+|:---:|:---:|:---:|
+| ۴۲ (تقسیم بخش مقیاس‌بندی) | 15 | 0.848 |
+| ۰ | 31 | 0.792 |
+| ۱ | 15 | 0.781 |
+| ۲ | 15 | 0.815 |
+| ۳ | 25 | 0.854 |
+
+بهترین k بین ۱۵ و ۳۱ و صحت اعتبارسنجی بین ۰.۷۸ و ۰.۸۵ جابه‌جا می‌شود؛ هر مسافر از ۱۷۸ مسافر اعتبارسنجی حدود ۰.۶ واحد درصد صحت است. **اعتبارسنجی متقابل** طبقه‌بندی‌شده پنج بخشی هر مسافر آموزش را یک بار در نقش اعتبارسنجی به کار می‌برد و میانگین پنج صحت، برآورد پایدارتری می‌دهد.
+
+کلاس `GridSearchCV` (جست‌وجوی شبکه‌ای) همه مقادیر k را با اعتبارسنجی متقابل روی **کل داده آموزش** (۷۱۲ مسافر، بدون نیاز به داده اعتبارسنجی جدا) می‌آزماید، بهترین را برمی‌گزیند و آن را روی کل داده آموزش دوباره آموزش می‌دهد. کد، ادامه همان کد تایتانیک است:
 
 ```python
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import make_pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
 
-# 1. Same Titanic data, split and preprocessing as before
-titanic = sns.load_dataset("titanic")
-num = ["age", "fare", "sibsp", "parch", "pclass"]
-cat = ["sex", "embarked"]
-X_train, X_test, y_train, y_test = train_test_split(titanic[num + cat], titanic["survived"],
-                                                    test_size=0.2, stratify=titanic["survived"],
-                                                    random_state=42)
-preprocess = ColumnTransformer([
-    ("num", make_pipeline(SimpleImputer(strategy="median"), StandardScaler()), num),
-    ("cat", make_pipeline(SimpleImputer(strategy="most_frequent"),
-                          OneHotEncoder(handle_unknown="ignore")), cat)])
+# Continues the Titanic code: same training/test split and the standardized preprocessing
+
+# 1. Grid search over k (odd values from 1 to 101) with stratified 5-fold CV on the training set
 model = make_pipeline(preprocess, KNeighborsClassifier())
-
-# 2. Grid search over k (odd values) and the voting rule, with stratified 5-fold CV
+grid = {"kneighborsclassifier__n_neighbors": range(1, 102, 2)}
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-grid = {"kneighborsclassifier__n_neighbors": range(1, 102, 2),
-        "kneighborsclassifier__weights": ["uniform", "distance"]}
 gs = GridSearchCV(model, grid, cv=cv, scoring="accuracy", return_train_score=True)
 gs.fit(X_train, y_train)
-print(f"best={ {k.split('__')[1]: v for k, v in gs.best_params_.items()} }  CV accuracy={gs.best_score_:.3f}")
+print(f"best k={gs.best_params_['kneighborsclassifier__n_neighbors']}  CV accuracy={gs.best_score_:.3f}")
 
-# 3. Validation curve for the uniform vote
-res = gs.cv_results_
-mask = np.array(res["param_kneighborsclassifier__weights"]) == "uniform"
-ks = np.array(res["param_kneighborsclassifier__n_neighbors"])[mask].astype(int)
+# 2. Validation curve: training and CV accuracy for each k
+ks = list(grid["kneighborsclassifier__n_neighbors"])
 fig, ax = plt.subplots(figsize=(7, 4))
-ax.plot(ks, res["mean_train_score"][mask], "o-", ms=3, label="Training")
-ax.plot(ks, res["mean_test_score"][mask], "s-", ms=3, label="Validation (5-fold CV)")
+ax.plot(ks, gs.cv_results_["mean_train_score"], "o-", ms=3, label="Training")
+ax.plot(ks, gs.cv_results_["mean_test_score"], "s-", ms=3, label="Validation (5-fold CV)")
 ax.set(xlabel="k (number of neighbours)", ylabel="Accuracy", title="k-NN on Titanic")
 ax.legend()
 plt.show()
 
-# 4. The best model is refitted on the whole training set; test set used once
-print(f"test accuracy={gs.score(X_test, y_test):.3f}")
+# 3. The best model is refitted on the whole training set; the test set is used once
+print(f"test accuracy={gs.score(X_test, y_test):.3f}  baseline test accuracy={1 - y_test.mean():.3f}")
 ```
 
 ```
-best={'n_neighbors': 17, 'weights': 'uniform'}  CV accuracy=0.826
-test accuracy=0.810
+best k=17  CV accuracy=0.826
+test accuracy=0.810  baseline test accuracy=0.615
 ```
 
 ![titanic knn validation curve](../img/titanic_knn_validation_curve.png)
 
-با k برابر ۱ صحت آموزش ۰.۹۸ ولی صحت اعتبارسنجی فقط ۰.۷۵ است (بیش‌برازش). بهترین مقدار k برابر **۱۷** با صحت اعتبارسنجی ۰.۸۲۶ است و پس از آن هر دو منحنی به‌تدریج پایین می‌آیند (کم‌برازش). صحت آزمون مدل منتخب ۰.۸۱۰ است، در برابر ۰.۶۱۷ مدل پایه.
+با k برابر ۱ صحت آموزش ۰.۹۸ ولی صحت اعتبارسنجی فقط ۰.۷۵ است (بیش‌برازش). بهترین مقدار k برابر **۱۷** با صحت اعتبارسنجی ۰.۸۲۶ است و پس از آن هر دو منحنی به‌تدریج پایین می‌آیند (کم‌برازش). صحت آزمون مدل منتخب ۰.۸۱۰ است، در برابر ۰.۶۱۵ مدل پایه روی همان داده آزمون.
 
 > [!important] قاعده
-> صحت آموزش k-NN با k کوچک هیچ اطلاعاتی درباره عملکرد واقعی نمی‌دهد. k را **فقط** با اعتبارسنجی متقابل انتخاب کنید؛ مقدار اولیه حدود جذر n پیشنهاد خوبی برای شروع جست‌وجوست.
-
----
-
-## یادگیری تنبل و نفرین ابعاد
-
-الگوریتم k-NN در آموزش **هیچ کاری** جز ذخیره داده نمی‌کند و همه محاسبات را به زمان پیش‌بینی موکول می‌کند؛ به آن **یادگیری تنبل** (Lazy Learning) می‌گویند.
-
-| جنبه | یادگیری تنبل (k-NN) | یادگیری مشتاق (رگرسیون لجستیک، درخت) |
-|:---:|:---:|:---:|
-| آموزش | فقط ذخیره داده؛ تقریباً آنی | ساخت مدل؛ ممکن است زمان‌بر باشد |
-| پیش‌بینی | کند: فاصله تا همه نقاط، از مرتبه n ضرب در p برای هر نقطه | سریع: اعمال یک فرمول یا پیمایش درخت |
-| حافظه | نگهداری **کل** داده آموزش | فقط پارامترهای مدل |
-| افزودن داده جدید | فوری | نیاز به آموزش مجدد |
-
-ساختارهایی مانند **KD-Tree** و **Ball-Tree** جست‌وجوی همسایه را در ابعاد کم سریع می‌کنند (`algorithm="auto"` خودکار انتخاب می‌کند).
-
-در ابعاد بالا فاصله‌ها **معنای خود را از دست می‌دهند**: فاصله نزدیک‌ترین و دورترین نقطه تقریباً برابر می‌شود (**نفرین ابعاد** ← [مهندسی و انتخاب ویژگی](../Part%203_Data%20Preprocessing/%DB%B1%DB%B3%20-%20%D9%85%D9%87%D9%86%D8%AF%D8%B3%DB%8C%20%D9%88%20%D8%A7%D9%86%D8%AA%D8%AE%D8%A7%D8%A8%20%D9%88%DB%8C%DA%98%DA%AF%DB%8C.md)). کد زیر ۵۰۰ نقطه تصادفی در مکعب واحد می‌سازد و نسبت دورترین به نزدیک‌ترین فاصله از نقطه اول را حساب می‌کند:
-
-```python
-import numpy as np
-from sklearn.metrics import pairwise_distances
-
-# Ratio of farthest to nearest distance from one point to 499 random points in a unit cube
-rng = np.random.default_rng(42)
-for p in [2, 10, 100, 1000]:
-    X = rng.uniform(size=(500, p))
-    d = pairwise_distances(X[:1], X[1:])[0]
-    print(f"dimensions={p:4d}  farthest/nearest={d.max() / d.min():.2f}")
-```
-
-```
-dimensions=   2  farthest/nearest=46.78
-dimensions=  10  farthest/nearest=3.20
-dimensions= 100  farthest/nearest=1.41
-dimensions=1000  farthest/nearest=1.10
-```
-
-در ۱۰۰۰ بعد، دورترین نقطه فقط ۱۰ درصد دورتر از نزدیک‌ترین است. پس پیش از k-NN در داده با ابعاد بالا، **انتخاب ویژگی** یا **کاهش ابعاد** لازم است ← [کاهش ابعاد](../Part%203_Data%20Preprocessing/%DB%B1%DB%B4-%20%DA%A9%D8%A7%D9%87%D8%B4%20%D8%A7%D8%A8%D8%B9%D8%A7%D8%AF.md)
-
-| مزایا | معایب |
-|:---:|:---:|
-| بسیار ساده و قابل فهم | پیش‌بینی کند برای داده بزرگ |
-| بدون فرض درباره شکل توزیع (ناپارامتری) | نگهداری کل داده آموزش |
-| مرز تصمیم انعطاف‌پذیر و ذاتاً چندکلاسه | حساس به مقیاس و ویژگی‌های بی‌ربط |
-| قابل استفاده برای رگرسیون ← [منظم‌سازی در رگرسیون](../Part%204_Regression/19%20-%20%D9%85%D9%86%D8%B8%D9%85%E2%80%8C%D8%B3%D8%A7%D8%B2%DB%8C%20%D8%AF%D8%B1%20%D8%B1%DA%AF%D8%B1%D8%B3%DB%8C%D9%88%D9%86.md) | ضعیف در ابعاد بالا؛ بدون مدل قابل تفسیر |
+> صحت آموزش k-NN با k کوچک هیچ اطلاعاتی درباره عملکرد واقعی نمی‌دهد. k را **فقط** با داده اعتبارسنجی انتخاب کنید، هرگز با داده آزمون. روش کنارگذاری ساده است، اما با داده کوچک اعتبارسنجی متقابل برآورد پایدارتری می‌دهد؛ مقدار اولیه حدود جذر n پیشنهاد خوبی برای شروع جست‌وجوست.
 
 > [!note] کارگاه عملی
 > دفترچه «۲۰ - کارگاه مبانی طبقه‌بندی و k-NN» توضیح یک پیش‌بینی با نزدیک‌ترین مسافران آموزش (`kneighbors`) و تمرین عملی کلاس (طبقه‌بندی گل زنبق با k-NN و رسم مرز تصمیم) را با پاسخ دارد. نحوه نوشتن این کدها در امتحان پرسیده نمی‌شود.
@@ -674,11 +590,12 @@ dimensions=1000  farthest/nearest=1.10
 | خطا | چرا نادرست است | روش درست |
 |:---:|:---:|:---:|
 | اجرای k-NN بدون مقیاس‌بندی | ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند | استانداردسازی داخل Pipeline |
-| انتخاب k با صحت آموزش | با k برابر ۱ صحت آموزش تقریباً ۱۰۰ درصد است | انتخاب k با اعتبارسنجی متقابل |
+| انتخاب k با صحت آموزش | با k برابر ۱ صحت آموزش تقریباً ۱۰۰ درصد است | انتخاب k با داده اعتبارسنجی |
+| انتخاب k با صحت آزمون | داده آزمون در انتخاب مدل نقش پیدا می‌کند و صحت آزمون خوش‌بینانه می‌شود | انتخاب با داده اعتبارسنجی؛ آزمون فقط یک بار در پایان |
+| تکیه بر تفاوت کوچک در یک داده اعتبارسنجی کوچک | با تقسیم دیگر برنده عوض می‌شود | اعتبارسنجی متقابل |
 | گزارش صحت بدون مدل پایه | صحت ۷۰ درصد وقتی کلاس اکثریت ۶۲ درصد است چندان خوب نیست | مقایسه با DummyClassifier |
 | تقسیم ساده در داده نامتوازن | نسبت کلاس‌ها در آموزش، آزمون و بخش‌ها به هم می‌خورد | تقسیم و اعتبارسنجی طبقه‌بندی‌شده |
 | مقدار k زوج در مسئله دودویی | رأی مساوی پیش می‌آید | مقدار k فرد یا رأی وزن‌دار |
-| ورود صدها ویژگی بی‌ربط به k-NN | نفرین ابعاد؛ فاصله‌ها بی‌معنا می‌شوند | انتخاب ویژگی یا کاهش ابعاد |
 
 ---
 
@@ -686,8 +603,8 @@ dimensions=1000  farthest/nearest=1.10
 
 ### سؤال‌های مفهومی
 
-> [!question]- ۱. تفاوت طبقه‌بندی دودویی، چندکلاسه و چندبرچسبی چیست؟ برای هر کدام مثالی بزنید.
-> در دودویی دو کلاس داریم (زنده ماندن یا نماندن). در چندکلاسه بیش از دو کلاس داریم و هر نمونه دقیقاً یک کلاس دارد (گونه گل). در چندبرچسبی هر نمونه می‌تواند هم‌زمان چند برچسب داشته باشد (فیلمی هم «کمدی» و هم «عاشقانه»).
+> [!question]- ۱. تفاوت طبقه‌بندی دودویی و چندکلاسه چیست؟ برای هر کدام مثالی بزنید. آیا k-NN برای مسئله چندکلاسه تغییری لازم دارد؟
+> در دودویی دو کلاس داریم (قبول یا مردود). در چندکلاسه بیش از دو کلاس داریم و هر نمونه دقیقاً یک کلاس دارد (گونه گل زنبق: ستوسا، ورسیکالر یا ویرجینیکا). الگوریتم k-NN تغییری لازم ندارد: کلاسی که بیشترین رأی را میان k همسایه دارد برنده است و برای هر کلاس یک احتمال برآورد می‌شود.
 
 > [!question]- ۲. چرا k-NN با k برابر ۱ روی داده آموزش تقریباً صحت ۱۰۰ درصد دارد؟ این عدد چه چیزی را نشان می‌دهد؟
 > چون هر نقطه آموزش نزدیک‌ترین همسایه خودش است (با فاصله صفر). این عدد فقط نشان می‌دهد مدل داده آموزش را **حفظ** کرده و درباره تعمیم اطلاعاتی نمی‌دهد. استثنا، نقاط تکراری با برچسب متفاوت است.
@@ -695,11 +612,11 @@ dimensions=1000  farthest/nearest=1.10
 > [!question]- ۳. چرا مقیاس‌بندی برای k-NN حیاتی اما برای درخت تصمیم بی‌اهمیت است؟
 > الگوریتم k-NN بر پایه فاصله است و ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند. درخت تصمیم هر ویژگی را **جداگانه** با یک آستانه مقایسه می‌کند؛ تغییر مقیاس فقط مقدار آستانه را عوض می‌کند.
 
-> [!question]- ۴. چرا k-NN «یادگیرنده تنبل» نامیده می‌شود؟ یک مزیت و یک عیب آن را بگویید.
-> چون در آموزش مدلی نمی‌سازد و فقط داده را ذخیره می‌کند. مزیت: افزودن داده جدید فوری است. عیب: پیش‌بینی برای داده بزرگ کند است و کل داده باید در حافظه بماند.
+> [!question]- ۴. دانشجویی k را با روش کنارگذاری انتخاب کرده و با یک تقسیم بهترین k برابر ۱۵ و با تقسیم دیگر ۳۱ به دست آورده است. چرا؟ چه پیشنهادی دارید؟
+> داده اعتبارسنجی کوچک است و صحت روی آن به این بستگی دارد که کدام نمونه‌ها در آن افتاده‌اند؛ تفاوت صحت kهای نزدیک به هم اغلب از این نوسان کوچک‌تر است. پیشنهاد: **اعتبارسنجی متقابل** (مثلاً پنج بخشی و طبقه‌بندی‌شده) که هر نمونه آموزش را یک بار در نقش اعتبارسنجی به کار می‌برد و برآورد پایدارتری می‌دهد. داده آزمون در هیچ‌کدام از این دو روش برای انتخاب k استفاده نمی‌شود.
 
-> [!question]- ۵. داده‌ای با ۵۰۰ ویژگی دارید که فقط ۱۰ ویژگی آن مرتبط است. آیا k-NN مناسب است؟
-> به‌تنهایی خیر. ۴۹۰ ویژگی بی‌ربط در فاصله سهم دارند و نویز آن‌ها فاصله‌ها را بی‌معنا می‌کند (نفرین ابعاد). پیش از k-NN باید **انتخاب ویژگی** یا **کاهش ابعاد** انجام داد.
+> [!question]- ۵. در مثال دانشجویان، اگر زمان مطالعه را به جای ساعت به دقیقه بنویسیم، پیش‌بینی 3-NN چه تغییری می‌کند؟ با مقیاس‌بندی Min-Max چه؟
+> بدون مقیاس‌بندی، اختلاف دقیقه‌ها (۶۰، ۱۲۰، ...) بر فاصله مسلط می‌شود و جلسات حضور عملاً نادیده گرفته می‌شود؛ همسایه‌ها و پیش‌بینی عوض می‌شوند (در مثال جزوه از مردود به قبول). با Min-Max هر ویژگی به بازه صفر تا یک می‌رود و نتیجه به واحد بستگی ندارد؛ ساعت یا دقیقه همان اعداد مقیاس‌شده و همان پیش‌بینی را می‌دهد.
 
 > [!question]- ۶. قاعده‌ای روی داده‌ای که با نگاه به آن طراحی شده صحت ۰.۹۵ دارد. آیا می‌توان گفت این قاعده برای دانشجویان ترم بعد هم ۹۵ درصد درست است؟
 > خیر. این **صحت آموزش** است و خوش‌بینانه است، چون قاعده با دیدن همین داده ساخته شده و ممکن است جزئیات تصادفی آن را دنبال کند. برای برآورد عملکرد روی دانشجوی تازه باید قاعده را روی داده‌ای سنجید که در ساختنش نقشی نداشته (داده آزمون)؛ در مثال دانشجویان، صحت ۰.۹ آموزش قاعده ۲ روی آزمون ۰.۶ شد.
@@ -726,18 +643,24 @@ dimensions=1000  farthest/nearest=1.10
 > $$
 > از صحت آموزش مدل پایه (۰.۶) بهتر است، اما از قاعده دوویژگی‌ای (۰.۹) بدتر.
 
+> [!question]- ۱۱. در مثال تغییر واحد، دقیقه مطالعه بین ۱۲۰ و ۶۰۰ و جلسات حضور بین ۳ و ۱۵ است. فاصله دانشجوی ۶ (۳۶۰ دقیقه، ۵ جلسه) تا دانشجوی تازه (۴۸۰ دقیقه، ۸ جلسه) پس از مقیاس‌بندی Min-Max چقدر است؟
+> مقادیر مقیاس‌شده: دانشجوی ۶ برابر (۳۶۰ منهای ۱۲۰ تقسیم بر ۴۸۰، ۵ منهای ۳ تقسیم بر ۱۲) یعنی (۰.۵۰۰، ۰.۱۶۷) و دانشجوی تازه (۰.۷۵۰، ۰.۴۱۷).
+> $$
+> d = \sqrt{(0.750 - 0.500)^2 + (0.417 - 0.167)^2} = \sqrt{0.0625 + 0.0625} \approx 0.354
+> $$
+
 ### سؤال‌های خواندن کد
 
-> [!question]- ۱۱. ایراد این کد چیست؟
+> [!question]- ۱۲. ایراد این کد چیست؟
 > ```python
 > model = KNeighborsClassifier(n_neighbors=5).fit(X_train, y_train)
 > ```
 > اگر ستون‌ها مقیاس‌های متفاوت دارند (مثلاً سن و کرایه)، ویژگی با دامنه بزرگ‌تر فاصله را کنترل می‌کند. باید `make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5))` نوشت.
 
-> [!question]- ۱۲. خروجی `knn.predict_proba(q)` برای یک مدل با k برابر ۵ و دو کلاس چه مقادیری می‌تواند داشته باشد؟
+> [!question]- ۱۳. خروجی `knn.predict_proba(q)` برای یک مدل با k برابر ۵ و دو کلاس چه مقادیری می‌تواند داشته باشد؟
 > هر احتمال نسبت همسایه‌های آن کلاس است؛ پس فقط مقادیر ۰، ۰.۲، ۰.۴، ۰.۶، ۰.۸ و ۱ ممکن است (با رأی ساده) و مجموع دو احتمال ۱ است.
 
-> [!question]- ۱۳. در `GridSearchCV` با شبکه زیر و `cv=5`، مدل چند بار آموزش می‌بیند؟
+> [!question]- ۱۴. در `GridSearchCV` با شبکه زیر و `cv=5`، مدل چند بار آموزش می‌بیند؟
 > ```python
 > grid = {"kneighborsclassifier__n_neighbors": range(1, 102, 2),
 >         "kneighborsclassifier__weights": ["uniform", "distance"]}
@@ -751,6 +674,6 @@ dimensions=1000  farthest/nearest=1.10
 > [!summary] خلاصه جلسه
 > - در **طبقه‌بندی** متغیر هدف کیفی است؛ مسئله **دودویی** یا **چندکلاسه** است و طبقه‌بند فضای ویژگی را با **مرز تصمیم** تقسیم می‌کند. **صحت** را همیشه با مدل پایه مقایسه کنید و همیشه بگویید صحت **آموزش**، **اعتبارسنجی** یا **آزمون** است: در مثال دانشجویان صحت قاعده دوویژگی‌ای روی آموزش ۰.۹ و روی دانشجویان آزمون ۰.۶ بود.
 > - ایده **k-NN**: نمونه‌های شبیه (نزدیک در فضای ویژگی‌ها) کلاس مشابه دارند؛ الگوریتم: فاصله تا همه نقاط آموزش، انتخاب k نزدیک‌ترین و رأی اکثریت؛ با **رأی وزن‌دار** همسایه‌های نزدیک‌تر اثر بیشتری دارند.
-> - مقدار **k** پیچیدگی را کنترل می‌کند: k کوچک بیش‌برازش و k بزرگ کم‌برازش. روی تایتانیک بهترین k برابر ۱۷ با صحت آزمون ۰.۸۱۰ (در برابر ۰.۶۱۷ مدل پایه) بود.
-> - **مقیاس‌بندی** برای k-NN حیاتی است؛ روی تایتانیک صحت اعتبارسنجی را از ۰.۷۰۶ به ۰.۷۹۸ رساند.
-> - الگوریتم k-NN **یادگیرنده تنبل** است و در **ابعاد بالا** به دلیل تمرکز فاصله‌ها ضعیف عمل می‌کند.
+> - مقدار **k** پیچیدگی را کنترل می‌کند: k کوچک بیش‌برازش و k بزرگ کم‌برازش. روی تایتانیک بهترین k برابر ۱۷ با صحت آزمون ۰.۸۱۰ (در برابر ۰.۶۱۵ مدل پایه) بود.
+> - **مقیاس‌بندی** برای k-NN حیاتی است؛ روی تایتانیک صحت اعتبارسنجی (Hold-out) را از ۰.۷۰۸ به ۰.۸۳۷ رساند.
+> - k را فقط با **داده اعتبارسنجی** انتخاب کنید: روش **کنارگذاری** ساده است اما با داده کوچک ناپایدار است (روی تایتانیک بهترین k با تقسیم‌های مختلف از ۱۵ تا ۳۱ جابه‌جا شد)؛ **اعتبارسنجی متقابل** برآورد پایدارتری می‌دهد.

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
+                "file": "Part 5_Classification/23 - روش‌های گروهی.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "20 -  مبانی طبقه‌بندی و k-NN"
+              "title": "23 - روش‌های گروهی"
             }
           }
         ],
@@ -81,8 +81,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "bbe8e4798675a2d2",
@@ -310,9 +309,13 @@
   },
   "active": "efb3529f50982590",
   "lastOpenFiles": [
+    "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
+    "Part 5_Classification/22 - درخت تصمیم.md",
+    "Part 5_Classification/21 - بیز ساده و رگرسیون لجستیک.md",
+    "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
+    "Part 4_Regression/18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.md",
     "img/students_knn.png",
     "Part 5_Classification/25 - ارزیابی مدل‌های طبقه‌بندی.md",
-    "Part 5_Classification/20 -  مبانی طبقه‌بندی و k-NN.md",
     "img/students_rule1.png",
     "img/students_rule2.png",
     "img/titanic_tree_pruning.png",
@@ -321,8 +324,6 @@
     "img/titanic_rf_importance.png",
     "img/sine_learning_curve.png",
     "img/students_decision_boundary.png",
-    "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
-    "Part 4_Regression/18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.md",
     "Part 4_Regression/18 - بیش‌برازش و اعتبارسنجی متقابل.md",
     "Part 4_Regression/17 - رگرسیون خطی چندگانه و ارزیابی.md",
     "Part 4_Regression/19 - منظم‌سازی در رگرسیون.md",
@@ -338,12 +339,9 @@
     "data/Mall_Customers.csv",
     "data",
     "img/pgu_logo.png",
-    "img/images/pgu_logo.png",
     "img/images",
     "Part 6_Clustering/28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل.md",
     "Part 5_Classification/23 - روش‌های گروهی.md",
-    "Part 5_Classification/22 - درخت تصمیم.md",
-    "Part 5_Classification/21 - بیز ساده و رگرسیون لجستیک.md",
     "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md",
     "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md",
     "Part 2_EDA/9 - مطالعه موردی EDA.md",
