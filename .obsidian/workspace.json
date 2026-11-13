@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Part 5_Classification/23 - روش‌های گروهی.md",
+                "file": "Part 4_Regression/18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "23 - روش‌های گروهی"
+              "title": "18 - رگرسیون چندجمله‌ای، بیش‌برازش و اعتبارسنجی متقابل"
             }
           }
         ],
@@ -81,7 +81,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "bbe8e4798675a2d2",
@@ -309,6 +310,8 @@
   },
   "active": "efb3529f50982590",
   "lastOpenFiles": [
+    "Claude outputs/18 - رگرسیون چندجمله_ای، بیش_برازش و اعتبارسنجی متقابل.md",
+    "Part 5_Classification/23 - روش‌های گروهی.md",
     "Part 5_Classification/24 -  ماشین بردار پشتیبان.md",
     "Part 5_Classification/22 - درخت تصمیم.md",
     "Part 5_Classification/21 - بیز ساده و رگرسیون لجستیک.md",
@@ -341,7 +344,6 @@
     "img/pgu_logo.png",
     "img/images",
     "Part 6_Clustering/28 - خوشه‌بندی چگالی‌محور و مبتنی بر مدل.md",
-    "Part 5_Classification/23 - روش‌های گروهی.md",
     "Part 4_Regression/16 - مبانی یادگیری نظارت‌شده و رگرسیون خطی ساده.md",
     "Part 3_Data Preprocessing/۱۵ - طراحی آزمایش و Pipeline.md",
     "Part 2_EDA/9 - مطالعه موردی EDA.md",
